@@ -1,0 +1,12 @@
+<div class="col-sm-6 col-sm-offset-3 reg-block">
+	<h3>Registration</h3>
+	<form name="regform" ng-submit="submit()" class="reg-form">
+		<input type="text" placeholder="Login" name="login" ng-model="login" required>
+		<input type="email" placeholder="Email" name="mail" ng-model="mail" required>
+		<input type="password" placeholder="Password" name="pass" ng-model="pass" required>
+		<input type="password" placeholder="Confirm password" name="confirmPass" ng-model="confirmPass" required>
+		<input type="submit" value="Send" class="btn btn-primary">
+		<span>{{note}}</span>
+	</form>
+
+</div>

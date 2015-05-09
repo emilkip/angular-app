@@ -1,0 +1,19 @@
+doctype html
+html(ng-app="mainModule")
+head
+	title Angular app
+	link(rel='stylesheet', type="text/less", href='/stylesheets/style.less')
+	link(rel='stylesheet', href="/bower_components/bootstrap/dist/css/bootstrap.min.css")
+
+body(ng-cloak)
+	block page
+
+script(src='/bower_components/jquery/dist/jquery.min.js')
+script(src='/bower_components/angular/angular.js')
+script(src='/bower_components/angular-route/angular-route.min.js')
+script(src='/bower_components/angular-resource/angular-resource.min.js')
+script(src='/javascripts/less/dist/less.min.js')
+script(src='/javascripts/controller.js')
+script(src='/javascripts/mainmodule.js')
+script(src='/javascripts/service.js')
+script(src='/javascripts/pageeffects.js')

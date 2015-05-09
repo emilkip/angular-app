@@ -1,0 +1,35 @@
+extends layout
+
+block page
+	.fixed-nav
+		.container
+			ul.nav
+				li 
+					a(href="#/main") Main
+				li 
+					a(href="#/content") Article
+			if (!user)
+				ul.auth
+					li
+						a(href="" id="login" ng-click="") Login
+					li
+						a(href="#/reg") Sign up
+				.auth-block
+					h3 Sign in
+					form(name="signin" action="/login" method="post")
+						input(type="text" name="username" placeholder="login")
+						input(type="password" name="password" placeholder="password")
+						button(type="Signin").btn.btn-primary Send
+			if (user)
+				if (user.isAdmin)
+					.admin-btn
+						a(href="/logout") Logout
+						a(href="/admin") Admin panel
+						a(href="/create") New article
+				if (!user.isAdmin)
+					.admin-btn
+						a(href="/logout") Logout
+						a(href="#/profile") Profile
+						a(href="/create") New article
+
+	.view.container(ng-view)

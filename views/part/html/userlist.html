@@ -1,0 +1,19 @@
+<div class="userlist col-md-8 col-md-offset-2">
+	<h1>User list</h1>
+	<div class="userlist-header cf">
+		<ul>
+			<li>ID</li>
+			<li>Name</li>
+			<li>Email</li>
+			<li>Password</li>
+		</ul>
+	</div>
+	<div class="user cf" ng-repeat="users in user">
+		<ul class="cf">
+			<li>{{users.id}}</li>
+			<li>{{users.login}}</li>
+			<li>{{users.email}}</li>
+			<li>{{users.pass}}</li>
+		</ul>
+	</div>
+</div>

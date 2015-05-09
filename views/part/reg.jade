@@ -1,0 +1,13 @@
+.col-sm-6.col-sm-offset-3.reg-block(ng-show="showForm")
+	h3 Registration
+	form(role="form", name="regForm", action="/register", method="post", ng-submit="createUser()", class="reg-form")
+		input(type="text", placeholder="Login", name="username", ng-change="checkUserNickname()", ng-model="userNickname", required)
+		input(type="email", placeholder="Email", name="email", ng-change="checkUserEmail()", ng-model="userEmail", required)
+		input(type="password", placeholder="Password", name="password", ng-model="userPass", required)
+		input(type="password", placeholder="Confirm password", ng-change="checkConfirm()", name="confirmPass", ng-model="confirmPass", required)
+		button(type="submit", class="btn btn-primary", ng-disabled="checker") Send
+		p {{note}}
+
+.col-sm-6.col-sm-offset-3.reg-block(ng-show="showSuccessMsg")
+	h3 Success !
+	p  Lorem ipsum dolor sit amet, consectetur adipisicing elit. At deleniti ut quo tempore dignissimos ratione molestias neque dolorum nulla quod saepe maiores, nisi asperiores, voluptatem a quas reprehenderit perferendis, nemo?

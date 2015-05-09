@@ -1,0 +1,25 @@
+.userlist-wrap
+	h1 User list
+	hr
+	.userlist-header.cf
+		ul.cf
+			li
+				p Nickname
+			li
+				P Email
+			li
+				p isAdmin
+			li
+				p Delete user
+			//li
+				input(type="text" placeholder="search user" ng-model="userSearch")
+	.user
+		ul.cf(ng-repeat="user in users | filter: userSearch | orderBy: sortItem")
+			li
+				p {{user.username}}
+			li
+				p {{user.email}}
+			li
+				input(type="checkbox" ng-checked="user.isAdmin" ng-model="checked" ng-click="setAdmin(user)")
+			li
+				button(ng-click="remove(user)").btn.btn-danger.btn-sm Remove
