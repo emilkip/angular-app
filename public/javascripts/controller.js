@@ -90,6 +90,7 @@ appController.controller('articleListCtrl', ['$scope','Article', '$resource',
 		Article.api.query(function(data) {
 			$scope.articles = data.reverse();
 		});
+	$scope.limit = 5;
 	$scope.sortItem = 'username';
 }]);
 
@@ -97,5 +98,19 @@ appController.controller('articleIdCtrl', ['$scope','Article','$routeParams',
 	function($scope, Article, $routeParams) {
 		Article.api.get({ id: $routeParams.articleId }, function(data) {
 			$scope.article = data;
+		});
+}]);
+
+appController.controller('articleCtrl', ['$scope','Article',
+	function($scope, Article) {
+		Article.api.query(function(data) {
+			$scope.articles = data.reverse();
+
+			$scope.remove = function(articles) {
+				var index = $scope.articles.indexOf(articles);
+				Article.api.remove({ id: articles._id }, function() {
+					$scope.articles.splice(index, 1);
+				});
+			};
 		});
 }]);

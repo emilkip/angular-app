@@ -49,30 +49,37 @@ router.get('/admin', function(req, res) {
 });
 
 router.get('/data', function(req, res) {
-	Users.find({}, function(err,data) {
+	Users.find({}, function(err, data) {
 		if(err) console.error;
 		res.json(data);
 	});
 });
 
 router.get('/article', function(req, res) {
-	Article.find({}, function(err,data) {
+	Article.find({}, function(err, data) {
 		if(err) console.error;
 		res.json(data);
 	});
 });
 
 router.get('/article/:id', function(req, res) {
-	Article.findById(req.params.id, function(err, article) {
+	Article.findById(req.params.id, function(err, data) {
 		if(err) console.error;
-		res.json(article);
+		res.json(data);
 	})
 });
 
-router.put('/data/:id', function(req, res) {
-	Users.findById(req.params.id, function(err, editUser) {
+router.delete('/article/:id', function(req, res) {
+	Article.findByIdAndRemove(req.params.id, function(err, data) {
 		if(err) console.error;
-		if(editUser.isAdmin == false) {
+		res.json(data);
+	});
+});
+
+router.put('/data/:id', function(req, res) {
+	Users.findById(req.params.id, function(err, data) {
+		if(err) console.error;
+		if(data.isAdmin == false) {
 			Users.findByIdAndUpdate(req.params.id, { $set: { isAdmin: true } }, function(err, user) {
 				if(err) console.error;
 			});
@@ -81,14 +88,14 @@ router.put('/data/:id', function(req, res) {
 				if(err) console.error;
 			});
 		}
-		res.json(editUser);
+		res.json(data);
 	});
 });
 
 router.delete('/data/:id', function(req, res) {
-	Users.findByIdAndRemove(req.params.id, function(err, user) {
+	Users.findByIdAndRemove(req.params.id, function(err, data) {
 		if(err) console.error;
-		res.json(user);
+		res.json(data);
 	});
 });
 

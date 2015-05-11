@@ -26,11 +26,6 @@ mainModule.config(['$routeProvider', function($routeProvider) {
 			templateUrl: '/part/reg.jade',
 			controller: 'formCtrl'
 		})
-		.when('/user', {
-			title: 'User list',
-			templateUrl: '/part/users.jade',
-			controller: 'userListCtrl'
-		})
 		.otherwise({
 			redirectTo: '/main'
 		});
@@ -49,6 +44,10 @@ adminModule.config(['$routeProvider', function($routeProvider) {
 		.when('/userlist', {
 			templateUrl: '/part/users.jade',
 			controller: 'userListCtrl'
+		})
+		.when('/article', {
+			templateUrl: '/part/article-manage.jade',
+			controller: 'articleCtrl'
 		})
 		.otherwise({
 			redirectTo: '/'

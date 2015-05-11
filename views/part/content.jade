@@ -20,7 +20,7 @@
 	h3 Last news
 	hr
 	ul
-		li(ng-repeat="article in articles")
+		li(ng-repeat="article in articles | limitTo: 7")
 			a(href="#/article/{{article._id}}") {{article.header}}
 			p {{article.author}} | {{article.publishDate}}
 			hr
