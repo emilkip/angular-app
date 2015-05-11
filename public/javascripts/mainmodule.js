@@ -7,24 +7,39 @@ var mainModule = angular.module('mainModule', ['ngRoute','appController','appSer
 mainModule.config(['$routeProvider', function($routeProvider) {
 	$routeProvider
 		.when('/main', {
+			title: 'Angular app',
 			templateUrl: '/part/main.jade'
 			//controller: ''
 		})
 		.when('/content', {
+			title: 'Article',
 			templateUrl: '/part/content.jade',
-			controller: 'articleCtrl'
+			controller: 'articleListCtrl'
+		})
+		.when('/article/:articleId', {
+			title: 'Article: ',
+			templateUrl: '/part/article.jade',
+			controller: 'articleIdCtrl'
 		})
 		.when('/reg', {
+			title: 'Sign in',
 			templateUrl: '/part/reg.jade',
 			controller: 'formCtrl'
 		})
 		.when('/user', {
+			title: 'User list',
 			templateUrl: '/part/users.jade',
 			controller: 'userListCtrl'
 		})
 		.otherwise({
 			redirectTo: '/main'
 		});
+}]);
+
+mainModule.run(['$location', '$rootScope', function($location, $rootScope) {
+	$rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
+		$rootScope.title = current.$$route.title;
+	});
 }]);
 
 var adminModule = angular.module('adminModule', ['ngRoute','appController','appService']);

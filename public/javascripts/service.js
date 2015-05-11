@@ -18,7 +18,12 @@ appService.factory('User', ['$resource',
 appService.factory('Article', ['$resource', 
 	function($resource){
 		return {
-			api: $resource('/article')
+			api: $resource('/article/:id', {}, {
+				get: {
+					method: 'GET',
+					params: { id: '@id' }
+				}
+			})
 		}
 	}
 ]);

@@ -28,7 +28,12 @@ router.get('/create', function(req, res) {
 });
 
 router.post('/create', function(req, res) {
-	var article = new Article({ header: req.body.header, text: req.body.text, author: req.user.username});
+	var dateNow = new Date();
+	var day = dateNow.getDate();
+	var year = dateNow.getFullYear();
+	var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	var date = day + ' ' + monthNames[dateNow.getMonth()] + ' ' + year;
+	var article = new Article({ header: req.body.header, text: req.body.text, author: req.user.username, publishDate: date});
 	article.save(function(err, article) {
 		if(err) console.log('Create error!');
 		res.redirect('/');
@@ -55,6 +60,13 @@ router.get('/article', function(req, res) {
 		if(err) console.error;
 		res.json(data);
 	});
+});
+
+router.get('/article/:id', function(req, res) {
+	Article.findById(req.params.id, function(err, article) {
+		if(err) console.error;
+		res.json(article);
+	})
 });
 
 router.put('/data/:id', function(req, res) {

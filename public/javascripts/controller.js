@@ -85,10 +85,17 @@ appController.controller('userListCtrl', ['$scope','User', '$resource',
 	$scope.sortItem = 'username';
 }]);
 
-appController.controller('articleCtrl', ['$scope','Article', '$resource',
-	function($scope, Article){
+appController.controller('articleListCtrl', ['$scope','Article', '$resource',
+	function($scope, Article) {
 		Article.api.query(function(data) {
-			$scope.articles = data;
+			$scope.articles = data.reverse();
 		});
 	$scope.sortItem = 'username';
+}]);
+
+appController.controller('articleIdCtrl', ['$scope','Article','$routeParams',
+	function($scope, Article, $routeParams) {
+		Article.api.get({ id: $routeParams.articleId }, function(data) {
+			$scope.article = data;
+		});
 }]);
