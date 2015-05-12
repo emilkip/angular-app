@@ -7,17 +7,16 @@ head
 
 body(ng-cloak)
 	.container
-		.col-sm-8.col-sm-offset-2.article-header
+		.col-sm-8.col-sm-offset-2.create-article-header
 			h1 Create new article
-			hr
-		.col-sm-8.col-sm-offset-2.article-form
-			form(action="/create" method="post" name="create-article")
+		.col-sm-8.col-sm-offset-2.article-form.cf
+			form(action="/create" method="post" name="create-article" enctype="multipart/form-data")
 				label(for="article-header") Header
 				input(type="text" name="header" required)
 				textarea(name="text" required)
 				button(type="submit").btn.btn-success Create
 				a(href="/").btn.btn-default Cancel
-				input(type="file" name="thumb" accept="image/*")
+				input(type="file" name="thumb" accept="image/*" required)
 
 script(src='/bower_components/jquery/dist/jquery.min.js')
 script(src='/bower_components/angular/angular.js')

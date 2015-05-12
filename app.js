@@ -5,6 +5,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var mongoose = require('mongoose');
 var path = require('path');
 var logger = require('morgan');
+var multer = require('multer');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
@@ -33,6 +34,7 @@ app.use(require('express-session')({
 	resave: false,
 	saveUninitialized: false
 }));
+app.use(multer({ dest: './public/images/uploads/'}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
