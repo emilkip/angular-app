@@ -1,19 +1,21 @@
-.col-sm-8
-	.col-sm-12.article-list-wrap(ng-repeat="article in articles")
-		img(ng-src="{{article.image}}", alt="")
-		.col-sm-10.col-sm-offset-1.text-wrap
+.col-sm-8(scroll="onScrollToEnd(checker)")
+	.col-sm-12.article-list-wrap(ng-repeat="article in articles | limitTo: lim")
+		.article-thumb
+			img(ng-src="/images/uploads/{{article.image}}", alt="")
+		.col-sm-10.col-sm-offset-1.text-wrap.cf
 			h1
 				a(href="#/article/{{article._id}}") {{article.header}}
 			hr
-			p.article-text {{article.text}}
+			p.article-text {{article.text | limitTo: 400}} ...
+			a(href="#/article/{{article._id}}").btn.btn-default Read more
 			hr
-			ul
+			ul.publish-data
 				li
-					p 
+					p
 						b Author: 
 						{{article.author}}
 				li
-					p 
+					p
 						b Publish date: 
 						{{article.publishDate}}
 .col-sm-4.last-news-block

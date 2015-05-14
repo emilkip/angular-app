@@ -12,7 +12,7 @@ mainModule.config(['$routeProvider', function($routeProvider) {
 			//controller: ''
 		})
 		.when('/content', {
-			title: 'Article',
+			title: 'Articles',
 			templateUrl: '/part/content.jade',
 			controller: 'articleListCtrl'
 		})
@@ -37,6 +37,25 @@ mainModule.run(['$location', '$rootScope', function($location, $rootScope) {
 	});
 }]);
 
+mainModule.directive('scroll', function(){
+	return {
+		// require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
+		restrict: 'A',
+		scope: {
+			scroll: '&'
+		},
+		link: function($scope, element, attr) {
+			$(document).scroll(function() {
+				$scope.$apply(function() {
+					if($(window).scrollTop() + $(window).height() == $(document).height()) {
+						$scope.scroll({checker: true});
+					}
+				});
+			})
+		}
+	}
+});
+
 var adminModule = angular.module('adminModule', ['ngRoute','appController','appService']);
 
 adminModule.config(['$routeProvider', function($routeProvider) {
@@ -55,6 +74,3 @@ adminModule.config(['$routeProvider', function($routeProvider) {
 }]);
 
 
-/* Filters */
-
-var filterModule = angular.module('filterModule', []);

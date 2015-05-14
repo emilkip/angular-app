@@ -4,7 +4,7 @@
 
 var appController = angular.module('appController', []);
 
-
+// Client side: Reg form validation
 appController.controller('formCtrl', ['$scope', 'User', '$resource',
 	function($scope, User, $recource) {
 		var data = User.api.query();
@@ -51,19 +51,9 @@ appController.controller('formCtrl', ['$scope', 'User', '$resource',
 				$scope.checker = false;
 			}
 		};
+}]);
 
-		// $scope.createUser = function() {
-		// 	if($scope.regForm.$valid) {
-		// 		$scope.note = 'Empty field';
-		// 		$scope.checker = true;
-		// 	} else {
-		// 		$scope.note = '';
-		// 		$scope.showForm = false;
-		// 		$scope.showSuccessMsg = true;
-		// 	}
-		// };
-	}]);
-
+// Admin side: user management
 appController.controller('userListCtrl', ['$scope','User', '$resource',
 	function($scope, User){
 		User.api.query(function(data) {
@@ -85,13 +75,20 @@ appController.controller('userListCtrl', ['$scope','User', '$resource',
 	$scope.sortItem = 'username';
 }]);
 
+// Client side
 appController.controller('articleListCtrl', ['$scope','Article', '$resource',
 	function($scope, Article) {
 		Article.api.query(function(data) {
 			$scope.articles = data.reverse();
+			console.log($scope.articles);
 		});
+
+		$scope.onScrollToEnd = function(checker) {
+			if(checker) $scope.lim += 5;
+		};
+
 	$scope.limit = 5;
-	$scope.sortItem = 'username';
+	$scope.lim = 5;
 }]);
 
 appController.controller('articleIdCtrl', ['$scope','Article','$routeParams',
@@ -101,6 +98,7 @@ appController.controller('articleIdCtrl', ['$scope','Article','$routeParams',
 		});
 }]);
 
+// Admin side: article management
 appController.controller('articleCtrl', ['$scope','Article',
 	function($scope, Article) {
 		Article.api.query(function(data) {

@@ -33,8 +33,7 @@ router.post('/create', function(req, res) {
 	var year = dateNow.getFullYear();
 	var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 	var date = day + ' ' + monthNames[dateNow.getMonth()] + ' ' + year;
-	var filename = '/images/uploads/' + req.files.thumb.name;
-	var article = new Article({ header: req.body.header, text: req.body.text, author: req.user.username, publishDate: date, image: filename });
+	var article = new Article({ header: req.body.header, text: req.body.text, author: req.user.username, publishDate: date, image: req.files.thumb.name });
 
 	article.save(function(err, article) {
 		if(err) console.log('Create error!');
