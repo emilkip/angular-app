@@ -6,6 +6,7 @@ var userSchema = new Schema({
 	username: String,
 	password: String,
 	email: String,
+	avatar: String,
 	isAdmin: {
 		type: Boolean,
 		default: false

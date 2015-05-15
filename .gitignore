@@ -1,5 +1,5 @@
-<<<<<<< HEAD
+.DS_Store
+*.log
 node_modules
-=======
-node_modules
->>>>>>> ef294de9d50e3c832707b8a2aa70150bf0d74fa6
+**/uploads
+**/useravatar

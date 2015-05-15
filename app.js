@@ -5,7 +5,6 @@ var LocalStrategy = require('passport-local').Strategy;
 var mongoose = require('mongoose');
 var path = require('path');
 var logger = require('morgan');
-var multer = require('multer');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
@@ -24,7 +23,7 @@ mongoose.connect('mongodb://localhost/users', function(err) {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-// Configuration
+// Middleware
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -34,7 +33,6 @@ app.use(require('express-session')({
 	resave: false,
 	saveUninitialized: false
 }));
-app.use(multer({ dest: './public/images/uploads/'}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));

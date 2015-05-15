@@ -22,14 +22,33 @@ block page
 						button(type="Signin").btn.btn-primary Send
 			if (user)
 				if (user.isAdmin)
+					.profile-btn
+						a(href="" id="profile")
+							img(src="/images/useravatar/" + user.avatar, alt="")
+							p= user.username
 					.admin-btn
-						a(href="/logout") Logout
-						a(href="/admin") Admin panel
 						a(href="/create") New article
+					.profile-block
+						.pb-img-wrap
+							img(src="/images/placeholder.jpg", alt="")
+						.pb-userinfo-wrap
+							p.username= user.username
+							p.pb-u-email=user.email
+							a(href="/logout").admin-logout Logout
+							a(href="/admin").admin-panel-btn Admin panel
 				if (!user.isAdmin)
+					.profile-btn
+						a(href="" id="profile")
+							img(src="/images/useravatar/" + user.avatar, alt="")
+							p= user.username
 					.admin-btn
-						a(href="/logout") Logout
-						a(href="#/profile") Profile
 						a(href="/create") New article
+					.profile-block
+						.pb-img-wrap
+							img(src="/images/useravatar/" + user.avatar, alt="")
+						.pb-userinfo-wrap
+							p.username= user.username
+							p.pb-u-email=user.email
+							a(href="/logout").user-logout Logout
 
 	.view.container(ng-view)

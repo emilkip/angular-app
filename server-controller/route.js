@@ -2,6 +2,7 @@
 
 var express = require('express');
 var passport = require('passport');
+var multer = require('multer');
 var Users = require('../models/users');
 var Article = require('../models/articles');
 var router = express.Router();
@@ -27,7 +28,7 @@ router.get('/create', function(req, res) {
 	}
 });
 
-router.post('/create', function(req, res) {
+router.post('/create', multer({ dest: './public/images/uploads/'}), function(req, res) {
 	var dateNow = new Date();
 	var day = dateNow.getDate();
 	var year = dateNow.getFullYear();
@@ -105,12 +106,13 @@ router.get('/logout', function(req, res) {
 	res.redirect('/');
 });
 
-router.post('/login', passport.authenticate('local'), function(req, res) {
-	res.redirect('/');
-});
+router.post('/login', passport.authenticate('local', {
+	successRedirect: '/#/content',
+	failureRedirect: '/'
+}));
 
-router.post('/register', function(req, res) {
-	Users.register(new Users({ username: req.body.username, email: req.body.email }), req.body.password, function(err, user) {
+router.post('/register',multer({ dest: './public/images/useravatar/'}), function(req, res) {
+	Users.register(new Users({ username: req.body.username, email: req.body.email, avatar: req.files.avatar.name }), req.body.password, function(err, user) {
 		if (err) console.error;
 
 		passport.authenticate('local')(req, res, function () {
