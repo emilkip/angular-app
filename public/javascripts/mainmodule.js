@@ -2,7 +2,13 @@
 
 'use strict';
 
-var mainModule = angular.module('mainModule', ['ngRoute','appController','appService']);
+var mainModule = angular.module('mainModule', [
+	'ngRoute',
+	'ngAnimate',
+	'appController',
+	'appService',
+	'appDirective'
+]);
 
 mainModule.config(['$routeProvider', function($routeProvider) {
 	$routeProvider
@@ -37,26 +43,11 @@ mainModule.run(['$location', '$rootScope', function($location, $rootScope) {
 	});
 }]);
 
-mainModule.directive('scroll', function(){
-	return {
-		// require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
-		restrict: 'A',
-		scope: {
-			scroll: '&'
-		},
-		link: function($scope, element, attr) {
-			$(document).scroll(function() {
-				$scope.$apply(function() {
-					if($(window).scrollTop() + $(window).height() == $(document).height()) {
-						$scope.scroll({checker: true});
-					}
-				});
-			})
-		}
-	}
-});
-
-var adminModule = angular.module('adminModule', ['ngRoute','appController','appService']);
+var adminModule = angular.module('adminModule', [
+	'ngRoute',
+	'appController',
+	'appService'
+]);
 
 adminModule.config(['$routeProvider', function($routeProvider) {
 	$routeProvider

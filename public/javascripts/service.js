@@ -5,7 +5,13 @@ var appService = angular.module('appService', ['ngResource']);
 appService.factory('User', ['$resource', 
 	function($resource){
 		return {
-			api: $resource('/data/:id', {}, {
+			api: $resource('/user/:id', {}, {
+				update: {
+					method: 'PUT',
+					params: { id: '@id' }
+				}
+			}),
+			avatar: $resource('/user/avatar/:id', {}, {
 				update: {
 					method: 'PUT',
 					params: { id: '@id' }

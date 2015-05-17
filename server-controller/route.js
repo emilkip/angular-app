@@ -50,11 +50,16 @@ router.get('/admin', function(req, res) {
 	}
 });
 
-router.get('/data', function(req, res) {
-	Users.find({}, function(err, data) {
-		if(err) console.error;
-		res.json(data);
-	});
+router.get('/user', function(req, res) {
+	if(!req.user || !req.user.isAdmin) {
+		res.redirect('/');
+	} else {
+		Users.find({}, function(err, data) {
+			if(err) console.error;
+			res.json(data);
+		});
+	}
+
 });
 
 router.get('/article', function(req, res) {
@@ -74,30 +79,34 @@ router.get('/article/:id', function(req, res) {
 router.delete('/article/:id', function(req, res) {
 	Article.findByIdAndRemove(req.params.id, function(err, data) {
 		if(err) console.error;
-		res.json(data);
 	});
 });
 
-router.put('/data/:id', function(req, res) {
+router.put('/user/:id', function(req, res) {
 	Users.findById(req.params.id, function(err, data) {
 		if(err) console.error;
 		if(data.isAdmin == false) {
-			Users.findByIdAndUpdate(req.params.id, { $set: { isAdmin: true } }, function(err, user) {
+			Users.findByIdAndUpdate(req.params.id, { $set: { isAdmin: true } }, function(err) {
 				if(err) console.error;
 			});
 		} else {
-			Users.findByIdAndUpdate(req.params.id, { $set: { isAdmin: false } }, function(err, user) {
+			Users.findByIdAndUpdate(req.params.id, { $set: { isAdmin: false } }, function(err) {
 				if(err) console.error;
 			});
 		}
-		res.json(data);
 	});
 });
 
-router.delete('/data/:id', function(req, res) {
-	Users.findByIdAndRemove(req.params.id, function(err, data) {
+router.post('/user/avatar/:id', multer({ dest: './public/images/useravatar/' }), function(req, res) {
+	Users.findByIdAndUpdate(req.params.id, { $set: { avatar: req.files.avatar.name } }, function(err) {
+		if (err) console.error;
+		res.redirect('/');
+	});
+});
+
+router.delete('/user/:id', function(req, res) {
+	Users.findByIdAndRemove(req.params.id, function(err) {
 		if(err) console.error;
-		res.json(data);
 	});
 });
 
@@ -111,14 +120,25 @@ router.post('/login', passport.authenticate('local', {
 	failureRedirect: '/'
 }));
 
-router.post('/register',multer({ dest: './public/images/useravatar/'}), function(req, res) {
-	Users.register(new Users({ username: req.body.username, email: req.body.email, avatar: req.files.avatar.name }), req.body.password, function(err, user) {
-		if (err) console.error;
+router.post('/register', multer({ dest: './public/images/useravatar/' }), function(req, res) {
+	if (!req.files.avatar) {
+		var defaultUserPlaceholder = 'user-placeholder.png';
+		Users.register(new Users({ username: req.body.username, email: req.body.email, avatar: defaultUserPlaceholder }), req.body.password, function(err, user) {
+			if (err) console.error;
 
-		passport.authenticate('local')(req, res, function () {
-			res.redirect('/');
+			passport.authenticate('local')(req, res, function () {
+				res.redirect('/');
+			});
 		});
-	});
+	} else {
+		Users.register(new Users({ username: req.body.username, email: req.body.email, avatar: req.files.avatar.name }), req.body.password, function(err, user) {
+			if (err) console.error;
+
+			passport.authenticate('local')(req, res, function () {
+				res.redirect('/');
+			});
+		});
+	}
 });
 
 

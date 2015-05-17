@@ -5,6 +5,10 @@
 var appController = angular.module('appController', []);
 
 // Client side: Reg form validation
+appController.controller('photoController', ['$scope','User', function(){
+	
+}]);
+
 appController.controller('formCtrl', ['$scope', 'User', '$resource',
 	function($scope, User, $recource) {
 		var data = User.api.query();
@@ -45,7 +49,6 @@ appController.controller('formCtrl', ['$scope', 'User', '$resource',
 			if ($scope.userPass !== $scope.confirmPass) {
 					$scope.note = 'Ivalid confirm pass!';
 					$scope.checker = true;
-					//$scope.confirmPass = $scope.confirmPass.$invalid;
 			} else {
 				$scope.note = '';
 				$scope.checker = false;

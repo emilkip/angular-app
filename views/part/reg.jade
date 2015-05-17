@@ -5,10 +5,6 @@
 		input(type="email", placeholder="Email", name="email", ng-change="checkUserEmail()", ng-model="userEmail", required)
 		input(type="password", placeholder="Password", name="password", ng-model="userPass", required)
 		input(type="password", placeholder="Confirm password", ng-change="checkConfirm()", name="confirmPass", ng-model="confirmPass", required)
-		input(type="file" name="avatar" accept="image/*")
+		input(type="file", name="avatar", accept="image/*")
 		button(type="submit", class="btn btn-primary", ng-disabled="checker") Send
 		p {{note}}
-
-.col-sm-6.col-sm-offset-3.reg-block(ng-show="showSuccessMsg")
-	h3 Success !
-	p  Lorem ipsum dolor sit amet, consectetur adipisicing elit. At deleniti ut quo tempore dignissimos ratione molestias neque dolorum nulla quod saepe maiores, nisi asperiores, voluptatem a quas reprehenderit perferendis, nemo?

@@ -4,9 +4,9 @@ block page
 	.fixed-nav
 		.container
 			ul.nav
-				li 
+				li
 					a(href="#/main") Main
-				li 
+				li
 					a(href="#/content") Article
 			if (!user)
 				ul.auth
@@ -25,30 +25,41 @@ block page
 					.profile-btn
 						a(href="" id="profile")
 							img(src="/images/useravatar/" + user.avatar, alt="")
-							p= user.username
+							p #{user.username}
 					.admin-btn
 						a(href="/create") New article
-					.profile-block
+					.profile-block(ng-hide="show")
 						.pb-img-wrap
-							img(src="/images/placeholder.jpg", alt="")
+							img(src="/images/useravatar/" + user.avatar, alt="")
+							button(ng-click="show = true").avatar-change-btn Change photo
 						.pb-userinfo-wrap
-							p.username= user.username
-							p.pb-u-email=user.email
+							p.username #{user.username}
+							p.pb-u-email #{user.email}
 							a(href="/logout").admin-logout Logout
 							a(href="/admin").admin-panel-btn Admin panel
 				if (!user.isAdmin)
 					.profile-btn
 						a(href="" id="profile")
 							img(src="/images/useravatar/" + user.avatar, alt="")
-							p= user.username
+							p #{user.username}
 					.admin-btn
 						a(href="/create") New article
-					.profile-block
+					.profile-block(ng-hide="show")
 						.pb-img-wrap
 							img(src="/images/useravatar/" + user.avatar, alt="")
+							button(ng-click="show = true").avatar-change-btn Change photo
 						.pb-userinfo-wrap
-							p.username= user.username
-							p.pb-u-email=user.email
+							p.username #{user.username}
+							p.pb-u-email #{user.email}
 							a(href="/logout").user-logout Logout
+		.modal-window-wrap(ng-show="show" ng-click="show = false")
+		.modal-window(ng-show="show")
+			if (user)
+				h3 Select new photo
+				form(action="/user/avatar/#{user._id}" method="post" enctype="multipart/form-data")
+					img(src="/images/default-placeholder.png", id="new-photo", alt="")
+					input(type="file", name="avatar", id="inp-new-photo", accept="image/*")
+					button(type="submit") send
+
 
 	.view.container(ng-view)
