@@ -70,7 +70,6 @@ appController.controller('userListCtrl', ['$scope','User',
 	function($scope, User){
 		User.api.query(function(data) {
 			$scope.users = data;
-			console.log(data);
 
 			$scope.remove = function(user) {
 				var index = $scope.users.indexOf(user);
