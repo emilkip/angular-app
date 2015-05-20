@@ -59,7 +59,6 @@ block page
 				form(action="/user/avatar/#{user._id}" method="post" enctype="multipart/form-data")
 					img(src="/images/default-placeholder.png", id="new-photo", alt="")
 					input(type="file", name="avatar", id="inp-new-photo", accept="image/*")
-					button(type="submit") send
-
+					button(type="submit") Save
 
 	.view.container(ng-view)

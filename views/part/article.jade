@@ -4,7 +4,7 @@
 	hr
 	p {{article.text}}
 	hr
-	ul
+	ul.cf
 		li
 			p 
 				b Author: 
@@ -13,3 +13,5 @@
 			p 
 				b Publish date: 
 				{{article.publishDate}}
+	hr
+	dir-disqus(disqus-shortname="YOUR_DISQUS_SHORTNAME" disqus-identifier="{{ identifier }}" disqus-url="{{ url }}")

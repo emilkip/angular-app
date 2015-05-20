@@ -50,16 +50,11 @@ router.get('/admin', function(req, res) {
 	}
 });
 
-router.get('/user', function(req, res) {
-	if(!req.user || !req.user.isAdmin) {
-		res.redirect('/');
-	} else {
-		Users.find({}, function(err, data) {
-			if(err) console.error;
-			res.json(data);
-		});
-	}
-
+router.get('/member_list', function(req, res) {
+	Users.find({}, function(err, data) {
+		if(err) console.error;
+		res.json(data);
+	});
 });
 
 router.get('/article', function(req, res) {

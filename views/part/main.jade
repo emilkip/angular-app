@@ -1,1 +1,24 @@
-.col-sm-10.col-sm-offset-1.view
+carousel(current-index="selected" interval="4000")
+	slide(ng-repeat="article in articles | limitTo: 3" active="article.active")
+		img(ng-src="/images/uploads/{{article.image}}", alt="")
+		.caption
+			h3
+				a(href="#/article/{{article._id}}") {{article.header | limitTo: 31}}
+			p Author: {{article.author}}
+.top-poster
+	h3 Top authors
+
+.col-sm-3.mp-ab-wrap(ng-repeat="article in articles | limitTo: 16")
+	.mp-article-block
+		.mp-ab-img
+			img(ng-src="/images/uploads/{{article.image}}", alt="")
+		.mp-ab-caption
+			h3
+				a(href="#/article/{{article._id}}") {{article.header | limitTo: 40}}
+			hr
+			p 
+				b Author: 
+				{{article.author}}
+			p 
+				b Publish date: 
+				{{article.publishDate}}

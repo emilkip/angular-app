@@ -4,13 +4,22 @@
 
 var appController = angular.module('appController', []);
 
-// Client side: Reg form validation
-appController.controller('photoController', ['$scope','User', function(){
-	
+appController.controller('mainPageCtrl', ['$scope','Article',
+	function($scope, Article){
+
+		Article.api.query(function(data) {
+			$scope.articles = data.reverse();
+		});
+		$scope.selectSlide = function(i) {
+			$scope.selected = i;
+		};
+
 }]);
 
-appController.controller('formCtrl', ['$scope', 'User', '$resource',
-	function($scope, User, $recource) {
+// Client side: Reg form validation
+appController.controller('formCtrl', ['$scope', 'User',
+	function($scope, User) {
+
 		var data = User.api.query();
 		$scope.checker = false;
 		$scope.showForm = true;
@@ -57,13 +66,15 @@ appController.controller('formCtrl', ['$scope', 'User', '$resource',
 }]);
 
 // Admin side: user management
-appController.controller('userListCtrl', ['$scope','User', '$resource',
+appController.controller('userListCtrl', ['$scope','User',
 	function($scope, User){
 		User.api.query(function(data) {
 			$scope.users = data;
+			console.log(data);
 
 			$scope.remove = function(user) {
 				var index = $scope.users.indexOf(user);
+				console.log(user);
 				User.api.remove({ id: user._id }, function() {
 					$scope.users.splice(index, 1);
 				});
@@ -79,11 +90,10 @@ appController.controller('userListCtrl', ['$scope','User', '$resource',
 }]);
 
 // Client side
-appController.controller('articleListCtrl', ['$scope','Article', '$resource',
+appController.controller('articleListCtrl', ['$scope','Article',
 	function($scope, Article) {
 		Article.api.query(function(data) {
 			$scope.articles = data.reverse();
-			console.log($scope.articles);
 		});
 
 		$scope.onScrollToEnd = function(checker) {

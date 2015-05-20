@@ -7,15 +7,17 @@ var mainModule = angular.module('mainModule', [
 	'ngAnimate',
 	'appController',
 	'appService',
-	'appDirective'
+	'appDirective',
+	'ui.bootstrap.carousel',
+	'angularUtils.directives.dirDisqus'
 ]);
 
 mainModule.config(['$routeProvider', function($routeProvider) {
 	$routeProvider
 		.when('/main', {
 			title: 'Angular app',
-			templateUrl: '/part/main.jade'
-			//controller: ''
+			templateUrl: '/part/main.jade',
+			controller: 'mainPageCtrl'
 		})
 		.when('/content', {
 			title: 'Articles',
