@@ -75,7 +75,7 @@
                                 reload: true,
                                 config: function () {
                                     this.page.identifier = scope.disqus_identifier;
-                                    this.page.url = 'http://localhost:3000/#!/article/' + $routeParams.articleId;
+                                    this.page.url = 'http://141.8.193.253:3000/#!/article/' + $routeParams.articleId;
                                     this.page.title = scope.disqus_title;
                                     this.language = scope.disqus_config_language;
                                 }
