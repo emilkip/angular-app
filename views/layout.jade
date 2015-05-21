@@ -5,13 +5,15 @@ html(ng-app="mainModule" class="no-js")
 		meta(http-equiv="X-UA-Compatible", content="IE=edge")
 		meta(name="viewport", content="width=device-width, initial-scale=1")
 
+		base(href="/")
+
 		title(ng-bind="title") Angular app
-		link(rel="stylesheet", type="text/less", href="/stylesheets/style.less")
+		link(rel="stylesheet", href="/stylesheets/style.css")
 		link(rel="stylesheet", href="/bower_components/bootstrap/dist/css/bootstrap.min.css")
 		link(rel="stylesheet", href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css")
 
 
-	body
+	body(ng-cloak)
 		//if lt IE 8
 			p.chromeframe.
 				You are using an <strong>outdated</strong> browser.
@@ -26,7 +28,6 @@ html(ng-app="mainModule" class="no-js")
 	script(src="/bower_components/angular-animate/angular-animate.min.js")
 	script(src="/bower_components/angular-ui-carousel/src/carousel/carousel.js")
 	script(src="/bower_components/angular-utils-disqus/dirDisqus.js")
-	script(src="/javascripts/less/dist/less.min.js")
 	script(src="/javascripts/controller.js")
 	script(src="/javascripts/mainmodule.js")
 	script(src="/javascripts/directive.js")

@@ -5,15 +5,15 @@ block page
 		.container
 			ul.nav
 				li
-					a(href="#/main") Main
+					a(href="#!/main") Main
 				li
-					a(href="#/content") Article
+					a(href="#!/content") Article
 			if (!user)
 				ul.auth
 					li
 						a(href="" id="login" ng-click="") Login
 					li
-						a(href="#/reg") Sign up
+						a(href="#!/reg") Sign up
 				.auth-block
 					h3 Sign in
 					form(name="signin" action="/login" method="post")

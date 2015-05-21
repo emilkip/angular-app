@@ -21,10 +21,10 @@
         module = angular.module(moduleName);
     } catch(err) {
         // named module does not exist, so create one
-        module = angular.module(moduleName, []);
+        module = angular.module(moduleName, ['ngRoute']);
     }
 
-    module.directive('dirDisqus', ['$window', function($window) {
+    module.directive('dirDisqus', ['$window','$routeParams', function($window,$routeParams) {
         return {
             restrict: 'E',
             scope: {
@@ -35,7 +35,7 @@
                 disqus_category_id: '@disqusCategoryId',
                 disqus_disable_mobile: '@disqusDisableMobile',
                 disqus_config_language : '@disqusConfigLanguage',
-                readyToBind: "@"
+                readyToBind: '@'
             },
             template: '<div id="disqus_thread"></div><a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>',
             link: function(scope) {
@@ -48,7 +48,7 @@
 
                 scope.$watch("readyToBind", function(isReady) {
 
-                    // If the directive has been called without the 'ready-to-bind' attribute, we
+                   // If the directive has been called without the 'ready-to-bind' attribute, we
                     // set the default to "true" so that Disqus will be loaded straight away.
                     if ( !angular.isDefined( isReady ) ) {
                         isReady = "true";
@@ -58,7 +58,7 @@
                         $window.disqus_shortname = scope.disqus_shortname;
                         $window.disqus_identifier = scope.disqus_identifier;
                         $window.disqus_title = scope.disqus_title;
-                        $window.disqus_url = scope.disqus_url;
+                        $window.disqus_url = 'http://localhost:3000/#!/article/' + $routeParams.articleId;
                         $window.disqus_category_id = scope.disqus_category_id;
                         $window.disqus_disable_mobile = scope.disqus_disable_mobile;
                         $window.disqus_config =  function () {
@@ -75,7 +75,7 @@
                                 reload: true,
                                 config: function () {
                                     this.page.identifier = scope.disqus_identifier;
-                                    this.page.url = scope.disqus_url;
+                                    this.page.url = 'http://localhost:3000/#!/article/' + $routeParams.articleId;
                                     this.page.title = scope.disqus_title;
                                     this.language = scope.disqus_config_language;
                                 }

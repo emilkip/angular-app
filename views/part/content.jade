@@ -4,10 +4,10 @@
 			img(ng-src="/images/uploads/{{article.image}}", alt="")
 		.col-sm-10.col-sm-offset-1.text-wrap.cf
 			h1
-				a(href="#/article/{{article._id}}") {{article.header}}
+				a(href="#!/article/{{article._id}}") {{article.header}}
 			hr
 			p.article-text {{article.text | limitTo: 400}} ...
-			a(href="#/article/{{article._id}}").btn.btn-default Read more
+			a(href="#!/article/{{article._id}}").btn.btn-default Read more
 			hr
 			ul.publish-data
 				li
@@ -23,6 +23,6 @@
 	hr
 	ul
 		li(ng-repeat="article in articles | limitTo: 7")
-			a(href="#/article/{{article._id}}") {{article.header}}
+			a(href="#!/article/{{article._id}}") {{article.header}}
 			p {{article.author}} | {{article.publishDate}}
 			hr

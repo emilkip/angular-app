@@ -12,7 +12,7 @@ var mainModule = angular.module('mainModule', [
 	'angularUtils.directives.dirDisqus'
 ]);
 
-mainModule.config(['$routeProvider', function($routeProvider) {
+mainModule.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 	$routeProvider
 		.when('/main', {
 			title: 'Angular app',
@@ -37,6 +37,9 @@ mainModule.config(['$routeProvider', function($routeProvider) {
 		.otherwise({
 			redirectTo: '/main'
 		});
+
+	$locationProvider.hashPrefix('!');
+
 }]);
 
 mainModule.run(['$location', '$rootScope', function($location, $rootScope) {

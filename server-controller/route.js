@@ -136,5 +136,9 @@ router.post('/register', multer({ dest: './public/images/useravatar/' }), functi
 	}
 });
 
+router.get('/*', function(req, res) {
+	res.render('index.jade', {});
+});
+
 
 module.exports = router;

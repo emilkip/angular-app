@@ -6,12 +6,12 @@
 	hr
 	ul.cf
 		li
-			p 
+			p
 				b Author: 
-				{{article.author}}
+				| {{article.author}}
 		li
-			p 
-				b Publish date: 
-				{{article.publishDate}}
+			p
+				b Publish date:
+				| {{article.publishDate}}
 	hr
 	dir-disqus(disqus-shortname="angular-app" disqus-identifier="{{ identifier }}" disqus-url="{{ url }}")

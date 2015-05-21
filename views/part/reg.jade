@@ -7,4 +7,5 @@
 		input(type="password", placeholder="Confirm password", ng-change="checkConfirm()", name="confirmPass", ng-model="confirmPass", required)
 		input(type="file", name="avatar", accept="image/*")
 		button(type="submit", class="btn btn-primary", ng-disabled="checker") Send
-		p {{note}}
+		.error-msg(ng-show="checker")
+			p {{note}}
