@@ -58,7 +58,7 @@
                         $window.disqus_shortname = scope.disqus_shortname;
                         $window.disqus_identifier = scope.disqus_identifier;
                         $window.disqus_title = scope.disqus_title;
-                        $window.disqus_url = 'http://localhost:3000/#!/article/' + $routeParams.articleId;
+                        $window.disqus_url = 'http://141.8.193.253:3000/#!/article/' + $routeParams.articleId;
                         $window.disqus_category_id = scope.disqus_category_id;
                         $window.disqus_disable_mobile = scope.disqus_disable_mobile;
                         $window.disqus_config =  function () {
