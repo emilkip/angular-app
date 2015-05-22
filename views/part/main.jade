@@ -12,13 +12,12 @@ carousel(current-index="selected" interval="4000")
 	.mp-article-block
 		.mp-ab-img
 			img(ng-src="/images/uploads/{{article.image}}", alt="")
-		.mp-ab-caption
+		.mp-ab-header
 			h3
-				a(href="#!/article/{{article._id}}") {{article.header | limitTo: 40}}
-			hr
-			p 
-				b Author: 
-				{{article.author}}
-			p 
-				b Publish date: 
-				{{article.publishDate}}
+				a(href="#!/article/{{article._id}}") {{article.header | limitTo: 61}}
+		.other-article-data
+			ul
+				li
+					p {{article.author}}
+				li
+					p {{article.publishDate}}

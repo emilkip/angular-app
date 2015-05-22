@@ -44,7 +44,9 @@ mainModule.config(['$routeProvider', '$locationProvider', function($routeProvide
 
 mainModule.run(['$location', '$rootScope', function($location, $rootScope) {
 	$rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
-		$rootScope.title = current.$$route.title;
+		if (current.hasOwnProperty('$$route')) {
+			$rootScope.title = current.$$route.title;
+		}
 	});
 }]);
 

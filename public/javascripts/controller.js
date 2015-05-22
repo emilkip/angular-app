@@ -40,20 +40,6 @@ appController.controller('formCtrl', ['$scope', 'User',
 			}
 		};
 
-		$scope.checkUserEmail = function() {
-			$scope.users = data;
-			for(var i = 0; i < $scope.users.length; i++) {
-				if ($scope.users[i].email == $scope.userEmail) {
-					$scope.note = 'Email "' + $scope.userEmail + '" already exist!';
-					$scope.checker = true;
-					return false;
-				} else {
-					$scope.note = '';
-					$scope.checker = false;
-				}
-			}
-		}
-
 		$scope.checkConfirm = function() {
 			if ($scope.userPass !== $scope.confirmPass) {
 					$scope.note = 'Ivalid confirm pass!';
@@ -66,21 +52,19 @@ appController.controller('formCtrl', ['$scope', 'User',
 }]);
 
 // Admin side: user management
-appController.controller('userListCtrl', ['$scope','User',
-	function($scope, User){
-		User.api.query(function(data) {
+appController.controller('userListCtrl', ['$scope','AdminUserlist',
+	function($scope, AdminUserlist){
+		AdminUserlist.api.query(function(data) {
 			$scope.users = data;
 
 			$scope.remove = function(user) {
 				var index = $scope.users.indexOf(user);
-				console.log(user);
-				User.api.remove({ id: user._id }, function() {
-					$scope.users.splice(index, 1);
-				});
+				AdminUserlist.api.remove({ id: user._id });
+				$scope.users.splice(index, 1);
 			};
 
 			$scope.setAdmin = function(user) {
-				User.api.update({ id: user._id }, function() {
+				AdminUserlist.api.update({ id: user._id }, function() {
 					console.log('User update');
 				});
 			};
@@ -118,9 +102,8 @@ appController.controller('articleCtrl', ['$scope','Article',
 
 			$scope.remove = function(articles) {
 				var index = $scope.articles.indexOf(articles);
-				Article.api.remove({ id: articles._id }, function() {
-					$scope.articles.splice(index, 1);
-				});
+				Article.api.remove({ id: articles._id });
+				$scope.articles.splice(index, 1);
 			};
 		});
 }]);

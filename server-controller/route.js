@@ -53,8 +53,37 @@ router.get('/admin', function(req, res) {
 router.get('/member_list', function(req, res) {
 	Users.find({}, function(err, data) {
 		if(err) console.error;
-		res.json(data);
+		var users = [];
+		data.forEach(function(item, i, arr) {
+			users[i] = {
+				_id: data[i]._id,
+				username: data[i].username,
+				avatar: data[i].avatar
+			};
+		});
+		res.json(users);
 	});
+});
+
+router.get('/admin_userlist', function(req, res) {
+	if(!req.user || !req.user.isAdmin) {
+		res.redirect('/');
+	} else {
+		Users.find({}, function(err, data) {
+			if(err) console.error;
+			var users = [];
+			data.forEach(function(item, i, arr) {
+				users[i] = {
+					_id: data[i]._id,
+					username: data[i].username,
+					email: data[i].email,
+					avatar: data[i].avatar,
+					isAdmin: data[i].isAdmin
+				};
+			});
+			res.json(users);
+		});
+	}
 });
 
 router.get('/article', function(req, res) {
@@ -77,7 +106,7 @@ router.delete('/article/:id', function(req, res) {
 	});
 });
 
-router.put('/user/:id', function(req, res) {
+router.put('/admin_userlist/:id', function(req, res) {
 	Users.findById(req.params.id, function(err, data) {
 		if(err) console.error;
 		if(data.isAdmin == false) {
@@ -99,7 +128,7 @@ router.post('/user/avatar/:id', multer({ dest: './public/images/useravatar/' }),
 	});
 });
 
-router.delete('/user/:id', function(req, res) {
+router.delete('/admin_userlist/:id', function(req, res) {
 	Users.findByIdAndRemove(req.params.id, function(err) {
 		if(err) console.error;
 	});

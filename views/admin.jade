@@ -1,37 +1,30 @@
 doctype html
 html(ng-app="adminModule")
-head
-	title Angular app: admin panel
-	link(rel="stylesheet", href="/stylesheets/style.css")
-	link(rel='stylesheet', href="/bower_components/bootstrap/dist/css/bootstrap.min.css")
+	head
+		title Angular app: admin panel
+		link(rel="stylesheet", href="/stylesheets/style.css")
+		link(rel='stylesheet', href="/bower_components/bootstrap/dist/css/bootstrap.min.css")
 
-body(ng-cloak)
-	.ap-menu
-		ul
-			li
-				a(href="/")
-					span.glyphicon.glyphicon-home
-					|To site
-			li
-				a(href="#/userlist") 
-					span.glyphicon.glyphicon-list-alt
-					|User list
-			li
-				a(href="#/article")
-					span.glyphicon.glyphicon-file
-					|Articles
-			li
-				a(href="/logout")
-					span.glyphicon.glyphicon-log-out
-					|Logout
+	body(ng-cloak)
+		.ap-menu
+			ul
+				li
+					a(href="/" target="blank")
+						span.glyphicon.glyphicon-home
+						|To site
+				li
+					a(href="#/userlist") 
+						span.glyphicon.glyphicon-list-alt
+						|User list
+				li
+					a(href="#/article")
+						span.glyphicon.glyphicon-file
+						|Articles
+				li
+					a(href="/logout")
+						span.glyphicon.glyphicon-log-out
+						|Logout
 
-	.ap-view(ng-view)
+		.ap-view(ng-view)
 
-script(src='/bower_components/jquery/dist/jquery.min.js')
-script(src='/bower_components/angular/angular.js')
-script(src='/bower_components/angular-route/angular-route.min.js')
-script(src='/bower_components/angular-resource/angular-resource.min.js')
-script(src='/javascripts/controller.js')
-script(src='/javascripts/mainmodule.js')
-script(src='/javascripts/service.js')
-script(src='/javascripts/pageeffects.js')
+		script(src="/javascripts/concat/heapofscripts.js")

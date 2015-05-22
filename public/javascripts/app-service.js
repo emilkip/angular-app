@@ -21,6 +21,19 @@ appService.factory('User', ['$resource',
 	}
 ]);
 
+appService.factory('AdminUserlist', ['$resource', 
+	function($resource){
+		return {
+			api: $resource('/admin_userlist/:id', {}, {
+				update: {
+					method: 'PUT',
+					params: { id: '@id' }
+				}
+			})
+		}
+	}
+]);
+
 appService.factory('Article', ['$resource', 
 	function($resource){
 		return {
