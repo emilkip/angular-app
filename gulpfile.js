@@ -13,7 +13,7 @@ gulp.task('less', function() {
 
 gulp.task('concat', function() {
 	return gulp.src('public/javascripts/*.js')
-		.pipe(concat('heapofscripts.js'))
+		.pipe(concat('app.js'))
 		.pipe(gulp.dest('public/javascripts/concat'));
 });
 
@@ -37,4 +37,4 @@ gulp.task('watch', function() {
 });
 
 
-gulp.task('default', ['concat','uglify','less','minifyCss','watch']);
+gulp.task('default', ['concat','less','minifyCss','watch']);

@@ -1,7 +1,7 @@
 .col-sm-8(scroll="onScrollToEnd(checker)")
 	.col-sm-12.article-list-wrap(ng-repeat="article in articles | limitTo: lim")
 		.article-thumb
-			img(ng-src="/images/uploads/{{article.image}}", alt="")
+			img(ng-src="/images/uploads/article_img/{{article.image}}", alt="")
 		.col-sm-10.col-sm-offset-1.text-wrap.cf
 			h1
 				a(href="#!/article/{{article._id}}") {{article.header}}
@@ -13,11 +13,11 @@
 				li
 					p
 						b Author: 
-						{{article.author}}
+						| {{article.author}}
 				li
 					p
 						b Publish date: 
-						{{article.publishDate}}
+						| {{article.publishDate}}
 .col-sm-4.last-news-block
 	h3 Last news
 	hr

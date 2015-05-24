@@ -5,8 +5,11 @@ var passport = require('passport');
 var multer = require('multer');
 var Users = require('../models/users');
 var Article = require('../models/articles');
+var gm = require('gm');
 var router = express.Router();
 
+
+console.log(__dirname);
 
 router.get('/', function(req, res) {
 	res.render('index', { user : req.user });
@@ -24,22 +27,33 @@ router.get('/create', function(req, res) {
 	if(!req.user) {
 		res.redirect('/');
 	} else {
-		res.render('part/create', {});
+		res.render('create', {});
 	}
 });
 
-router.post('/create', multer({ dest: './public/images/uploads/'}), function(req, res) {
-	var dateNow = new Date();
-	var day = dateNow.getDate();
-	var year = dateNow.getFullYear();
-	var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-	var date = day + ' ' + monthNames[dateNow.getMonth()] + ' ' + year;
-	var article = new Article({ header: req.body.header, text: req.body.text, author: req.user.username, publishDate: date, image: req.files.thumb.name });
+router.post('/create', multer({ dest: './public/images/uploads/', 
+			onFileUploadComplete: function(file) {
+				var imagePath = file.path;
 
-	article.save(function(err, article) {
-		if(err) console.log('Create error!');
-		res.redirect('/');
-	});
+				gm(imagePath)
+					.resize(1000,720)
+					.quality(90)
+					.write('public/images/uploads/article_img/' + file.name, function(err) {
+						if(err) console.log('Error: ' + err);
+					});
+			}}), 
+	function(req, res) {
+		var dateNow = new Date();
+		var day = dateNow.getDate();
+		var year = dateNow.getFullYear();
+		var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+		var date = day + ' ' + monthNames[dateNow.getMonth()] + ' ' + year;
+		var article = new Article({ header: req.body.header, text: req.body.text, author: req.user.username, publishDate: date, image: req.files.thumb.name });
+
+		article.save(function(err, article) {
+			if(err) console.log('Create error!');
+			res.redirect('/');
+		});
 });
 
 router.get('/admin', function(req, res) {
@@ -57,8 +71,7 @@ router.get('/member_list', function(req, res) {
 		data.forEach(function(item, i, arr) {
 			users[i] = {
 				_id: data[i]._id,
-				username: data[i].username,
-				avatar: data[i].avatar
+				username: data[i].username
 			};
 		});
 		res.json(users);
@@ -71,17 +84,7 @@ router.get('/admin_userlist', function(req, res) {
 	} else {
 		Users.find({}, function(err, data) {
 			if(err) console.error;
-			var users = [];
-			data.forEach(function(item, i, arr) {
-				users[i] = {
-					_id: data[i]._id,
-					username: data[i].username,
-					email: data[i].email,
-					avatar: data[i].avatar,
-					isAdmin: data[i].isAdmin
-				};
-			});
-			res.json(users);
+			res.json(data);
 		});
 	}
 });
@@ -89,6 +92,7 @@ router.get('/admin_userlist', function(req, res) {
 router.get('/article', function(req, res) {
 	Article.find({}, function(err, data) {
 		if(err) console.error;
+
 		res.json(data);
 	});
 });
@@ -121,11 +125,23 @@ router.put('/admin_userlist/:id', function(req, res) {
 	});
 });
 
-router.post('/user/avatar/:id', multer({ dest: './public/images/useravatar/' }), function(req, res) {
-	Users.findByIdAndUpdate(req.params.id, { $set: { avatar: req.files.avatar.name } }, function(err) {
-		if (err) console.error;
-		res.redirect('/');
-	});
+router.post('/user/avatar/:id', 
+	multer({ dest: './public/images/useravatar', 
+			onFileUploadComplete: function(file) {
+				var imagePath = file.path;
+
+				gm(imagePath)
+					.resize(350,350)
+					.write('public/images/useravatar/350x350/' + file.name, function(err) {
+						if(err) console.log('Error: ' + err);
+					});
+			}
+	}), 
+	function(req, res) {
+		Users.findByIdAndUpdate(req.params.id, { $set: { avatar: req.files.avatar.name } }, function(err) {
+			if (err) console.error;
+			res.redirect('/');
+		});
 });
 
 router.delete('/admin_userlist/:id', function(req, res) {
@@ -140,7 +156,7 @@ router.get('/logout', function(req, res) {
 });
 
 router.post('/login', passport.authenticate('local', {
-	successRedirect: '/#/content',
+	successRedirect: '/',
 	failureRedirect: '/'
 }));
 
@@ -163,10 +179,6 @@ router.post('/register', multer({ dest: './public/images/useravatar/' }), functi
 			});
 		});
 	}
-});
-
-router.get('/*', function(req, res) {
-	res.render('index.jade', {});
 });
 
 

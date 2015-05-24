@@ -1,17 +1,31 @@
 carousel(current-index="selected" interval="4000")
 	slide(ng-repeat="article in articles | limitTo: 3" active="article.active")
-		img(ng-src="/images/uploads/{{article.image}}", alt="")
+		img(ng-src="/images/uploads/article_img/{{article.image}}", alt="")
 		.caption
 			h3
 				a(href="#!/article/{{article._id}}") {{article.header | limitTo: 31}}
 			p Author: {{article.author}}
-.top-poster
-	h3 Top authors
 
-.col-sm-3.mp-ab-wrap(ng-repeat="article in articles | limitTo: 16")
+.mp-hl.col-sm-12
+	.row
+		.col-sm-3.cf
+			h3 Last articles
+		.col-sm-7.cf
+			.line
+		.col-sm-2.cf
+			.block-type-btn.cf
+				ul
+					li
+						.glyphicon.glyphicon-th(ng-click="changeSize(1)")
+					li
+						.glyphicon.glyphicon-th-large(ng-click="changeSize(2)")
+					li
+						.glyphicon.glyphicon-th-list(ng-click="changeSize(3)")
+
+.mp-ab-wrap(ng-repeat="article in articles | limitTo: 16" ng-class="class")
 	.mp-article-block
 		.mp-ab-img
-			img(ng-src="/images/uploads/{{article.image}}", alt="")
+			img(ng-src="/images/uploads/article_img/{{article.image}}", alt="")
 		.mp-ab-header
 			h3
 				a(href="#!/article/{{article._id}}") {{article.header | limitTo: 61}}

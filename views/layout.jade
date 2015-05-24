@@ -14,12 +14,14 @@ html(ng-app="mainModule" class="no-js")
 
 
 	body(ng-cloak)
-		//if lt IE 8
-			p.chromeframe.
-				You are using an <strong>outdated</strong> browser.
-				Please <a href="http://browsehappy.com/">upgrade your browser</a>
-				to improve your experience.
+		<!--[if IE 8]>
+		p.chromeframe
+			| You are using an <strong>outdated</strong> browser.
+			| Please <a href="http://browsehappy.com/">upgrade your browser</a>
+			| to improve your experience.
+		<![endif]-->
+
 		block page
 
-		script(src="/javascripts/concat/heapofscripts.js")
+		script(src="/javascripts/concat/app.js")
 		script(src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js")

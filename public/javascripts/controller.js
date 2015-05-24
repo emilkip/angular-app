@@ -12,8 +12,23 @@ appController.controller('mainPageCtrl', ['$scope','Article',
 		});
 		$scope.selectSlide = function(i) {
 			$scope.selected = i;
-		};
+		}
 
+		$scope.class = 'col-sm-3';
+
+		$scope.changeSize = function(btnNum) {
+			switch(btnNum) {
+				case 1:
+					$scope.class = 'col-sm-3';
+					break;
+				case 2:
+					$scope.class = 'col-sm-6';
+					break;
+				case 3:
+					$scope.class = 'col-sm-12';
+					break;
+			}
+		}
 }]);
 
 // Client side: Reg form validation
@@ -38,7 +53,7 @@ appController.controller('formCtrl', ['$scope', 'User',
 					$scope.checker = false;
 				}
 			}
-		};
+		}
 
 		$scope.checkConfirm = function() {
 			if ($scope.userPass !== $scope.confirmPass) {
@@ -48,7 +63,7 @@ appController.controller('formCtrl', ['$scope', 'User',
 				$scope.note = '';
 				$scope.checker = false;
 			}
-		};
+		}
 }]);
 
 // Admin side: user management
@@ -61,13 +76,13 @@ appController.controller('userListCtrl', ['$scope','AdminUserlist',
 				var index = $scope.users.indexOf(user);
 				AdminUserlist.api.remove({ id: user._id });
 				$scope.users.splice(index, 1);
-			};
+			}
 
 			$scope.setAdmin = function(user) {
 				AdminUserlist.api.update({ id: user._id }, function() {
 					console.log('User update');
 				});
-			};
+			}
 		});
 	$scope.sortItem = 'username';
 }]);
@@ -81,7 +96,7 @@ appController.controller('articleListCtrl', ['$scope','Article',
 
 		$scope.onScrollToEnd = function(checker) {
 			if(checker) $scope.lim += 5;
-		};
+		}
 
 	$scope.limit = 5;
 	$scope.lim = 5;
@@ -104,6 +119,6 @@ appController.controller('articleCtrl', ['$scope','Article',
 				var index = $scope.articles.indexOf(articles);
 				Article.api.remove({ id: articles._id });
 				$scope.articles.splice(index, 1);
-			};
+			}
 		});
 }]);

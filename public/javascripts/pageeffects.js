@@ -21,5 +21,4 @@ $(document).ready(function() {
 	$("#inp-new-photo").change(function(){
 		showImg(this);
 	});
-
 });

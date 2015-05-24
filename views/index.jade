@@ -24,13 +24,13 @@ block page
 				if (user.isAdmin)
 					.profile-btn
 						a(href="" id="profile")
-							img(src="/images/useravatar/" + user.avatar, alt="")
+							img(src="/images/useravatar/350x350/" + user.avatar, alt="")
 							p #{user.username}
 					.admin-btn
 						a(href="/create") New article
 					.profile-block(ng-hide="show")
 						.pb-img-wrap
-							img(src="/images/useravatar/" + user.avatar, alt="")
+							img(src="/images/useravatar/350x350/" + user.avatar, alt="")
 							button(ng-click="show = true").avatar-change-btn Change photo
 						.pb-userinfo-wrap
 							p.username #{user.username}
@@ -40,13 +40,13 @@ block page
 				if (!user.isAdmin)
 					.profile-btn
 						a(href="" id="profile")
-							img(src="/images/useravatar/" + user.avatar, alt="")
+							img(src="/images/useravatar/350x350/" + user.avatar, alt="")
 							p #{user.username}
 					.admin-btn
 						a(href="/create") New article
 					.profile-block(ng-hide="show")
 						.pb-img-wrap
-							img(src="/images/useravatar/" + user.avatar, alt="")
+							img(src="/images/useravatar/350x350/" + user.avatar, alt="")
 							button(ng-click="show = true").avatar-change-btn Change photo
 						.pb-userinfo-wrap
 							p.username #{user.username}

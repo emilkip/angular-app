@@ -1,5 +1,5 @@
 .col-sm-10.col-sm-offset-1.article-wrap.cf
-	img(ng-src="/images/uploads/{{article.image}}", alt="")
+	img(ng-src="/images/uploads/article_img/{{article.image}}", alt="")
 	h1 {{article.header}}
 	hr
 	p {{article.text}}
@@ -15,3 +15,4 @@
 				| {{article.publishDate}}
 	hr
 	dir-disqus(disqus-shortname="angular-app" disqus-identifier="{{ identifier }}" disqus-url="{{ url }}")
+	//- dir-disqus(disqus-shortname="angular-app" disqus-identifier="{{ identifier }}" disqus-url="{{ url }}")

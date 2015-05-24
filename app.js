@@ -36,6 +36,7 @@ app.use(require('express-session')({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
+app.disable('x-powered-by');
 
 // Passport config
 passport.use(new LocalStrategy(Users.authenticate()));
