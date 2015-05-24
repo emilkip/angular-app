@@ -14,7 +14,7 @@ var Users = require('./models/users');
 var app = express();
 
 // Mongodb configuration
-mongoose.connect('mongodb://localhost/users', function(err) {
+mongoose.connect('mongodb://localhost/angular_app', function(err) {
 	if(err) return console.log('Could not connect to MongoDB!');
 	console.log('Connected to mongodb');
 });
