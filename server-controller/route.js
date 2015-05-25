@@ -31,29 +31,45 @@ router.get('/create', function(req, res) {
 	}
 });
 
-router.post('/create', multer({ dest: './public/images/uploads/', 
-			onFileUploadComplete: function(file) {
-				var imagePath = file.path;
+router.post('/create', 
+	multer({ dest: './public/images/uploads/', 
+		onFileUploadComplete: function(file) {
+			var imagePath = file.path;
 
-				gm(imagePath)
-					.resize(1000,720)
-					.quality(90)
-					.write('public/images/uploads/article_img/' + file.name, function(err) {
-						if(err) console.log('Error: ' + err);
-					});
-			}}), 
+			gm(imagePath)
+				.resize(1000,720)
+				.quality(90)
+				.write('public/images/uploads/article_img/' + file.name, function(err) {
+					if(err) console.log('Error: ' + err);
+				});
+		}
+	}), 
 	function(req, res) {
+		var defaultUserPlaceholder = 'article-placeholder.png';
 		var dateNow = new Date();
 		var day = dateNow.getDate();
 		var year = dateNow.getFullYear();
+		var hour = dateNow.getHours();
+		var minute = (dateNow.getMinutes()<10?'0':'') + dateNow.getMinutes();
+		
 		var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-		var date = day + ' ' + monthNames[dateNow.getMonth()] + ' ' + year;
-		var article = new Article({ header: req.body.header, text: req.body.text, author: req.user.username, publishDate: date, image: req.files.thumb.name });
+		var date = day + ' ' + monthNames[dateNow.getMonth()] + ' ' + year + ' / ' + hour + ':' + minute;
 
-		article.save(function(err, article) {
-			if(err) console.log('Create error!');
-			res.redirect('/');
-		});
+		if(!req.files.thumb) {
+			var article = new Article({ header: req.body.header, text: req.body.text, author: req.user.username, publishDate: date, image: defaultUserPlaceholder });
+
+			article.save(function(err, article) {
+				if(err) console.log('Create error!');
+				res.redirect('/');
+			});
+		} else {
+			var article = new Article({ header: req.body.header, text: req.body.text, author: req.user.username, publishDate: date, image: req.files.thumb.name });
+
+			article.save(function(err, article) {
+				if(err) console.log('Create error!');
+				res.redirect('/');
+			});
+		}
 });
 
 router.get('/admin', function(req, res) {
@@ -127,15 +143,15 @@ router.put('/admin_userlist/:id', function(req, res) {
 
 router.post('/user/avatar/:id', 
 	multer({ dest: './public/images/useravatar', 
-			onFileUploadComplete: function(file) {
-				var imagePath = file.path;
+		onFileUploadComplete: function(file) {
+			var imagePath = file.path;
 
-				gm(imagePath)
-					.resize(350,350)
-					.write('public/images/useravatar/350x350/' + file.name, function(err) {
-						if(err) console.log('Error: ' + err);
-					});
-			}
+			gm(imagePath)
+				.resize(350,350)
+				.write('public/images/useravatar/350x350/' + file.name, function(err) {
+					if(err) console.log('Error: ' + err);
+				});
+		}
 	}), 
 	function(req, res) {
 		Users.findByIdAndUpdate(req.params.id, { $set: { avatar: req.files.avatar.name } }, function(err) {
@@ -160,7 +176,19 @@ router.post('/login', passport.authenticate('local', {
 	failureRedirect: '/'
 }));
 
-router.post('/register', multer({ dest: './public/images/useravatar/' }), function(req, res) {
+router.post('/register', 
+	multer({ dest: './public/images/useravatar/', 
+		onFileUploadComplete: function(file) {
+			var imagePath = file.path;
+
+			gm(imagePath)
+				.resize(350,350)
+				.write('public/images/useravatar/350x350/' + file.name, function(err) {
+					if(err) console.log('Error: ' + err);
+				});
+		}
+	}), 
+	function(req, res) {
 	if (!req.files.avatar) {
 		var defaultUserPlaceholder = 'user-placeholder.png';
 		Users.register(new Users({ username: req.body.username, email: req.body.email, avatar: defaultUserPlaceholder }), req.body.password, function(err, user) {
@@ -179,6 +207,10 @@ router.post('/register', multer({ dest: './public/images/useravatar/' }), functi
 			});
 		});
 	}
+});
+
+router.get('/*', function(req, res) {
+	res.redirect('/');
 });
 
 

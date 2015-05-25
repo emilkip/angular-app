@@ -22,5 +22,6 @@ node_modules
 **/useravatar/350x350/*.jpeg
 **/useravatar/350x350/*.png
 
-!**/uploads/article_img/
-!**/useravatar/350x350/user-placeholder.png
+!**/default-placeholder.png
+!**/article-placeholder.png
+!**/user-placeholder.png
