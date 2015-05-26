@@ -37,4 +37,4 @@ gulp.task('watch', function() {
 });
 
 
-gulp.task('default', ['concat','less','minifyCss','watch']);
+gulp.task('default', ['concat','uglify','less','minifyCss','watch']);

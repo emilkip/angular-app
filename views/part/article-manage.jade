@@ -1,5 +1,7 @@
 .article-list-manage
 	h1 Article list
+	.controll-elem.cf
+		input(type="text" placeholder="Search article" ng-model="articleSearch.header")
 	.article-header.cf
 		ul
 			li
@@ -11,7 +13,7 @@
 			li
 				p Delete article
 	.article-manage-item
-		ul.cf(ng-repeat="article in articles")
+		ul.cf(ng-repeat="article in articles | filter: articleSearch | orderBy: sortSelect: reverse = true")
 			li
 				a(href="/#!/article/{{article._id}}" target="blank") {{article.header}}
 			li

@@ -2,7 +2,7 @@
 
 'use strict';
 
-var appController = angular.module('appController', []);
+var appController = angular.module('appController', ['ngAnimate']);
 
 appController.controller('mainPageCtrl', ['$scope','Article',
 	function($scope, Article){
@@ -88,8 +88,9 @@ appController.controller('userListCtrl', ['$scope','AdminUserlist',
 					console.log('User update');
 				});
 			}
+
+			$scope.sortSelect = 'username';
 		});
-	$scope.sortItem = 'username';
 }]);
 
 // Client side
@@ -123,12 +124,20 @@ appController.controller('articleIdCtrl', ['$scope','Article','$routeParams',
 appController.controller('articleCtrl', ['$scope','Article',
 	function($scope, Article) {
 		Article.api.query(function(data) {
+
+			function custom_sort(a,b) {
+				return new Date(a.publishDate).getTime() - new Date(b.publishDate).getTime();
+			}
+			data.sort(custom_sort);
+
 			$scope.articles = data.reverse();
 
-			$scope.remove = function(articles) {
-				var index = $scope.articles.indexOf(articles);
-				Article.api.remove({ id: articles._id });
+			$scope.remove = function(article) {
+				var index = $scope.articles.indexOf(article);
+				Article.api.remove({ id: article._id });
 				$scope.articles.splice(index, 1);
 			}
+
+			$scope.sortSelect = 'publishDate';
 		});
 }]);

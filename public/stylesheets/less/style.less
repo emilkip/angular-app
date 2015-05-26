@@ -519,7 +519,6 @@ input, textarea {
 }
 
 .userlist-header {
-	.radius;
 	margin: 0 auto;
 	background: #333;
 	color: #fff;
@@ -558,9 +557,44 @@ input, textarea {
 	}
 }
 
+.v-line {
+	border-right: 1px solid #C5C5C5;
+	border-left: 1px solid #8E8E8E;
+	width: 1px;
+	height: 40px;
+	float: left;
+	margin: 0 20px;
+}
+
+.controll-elem {
+	padding: 5px;
+	width: 100%;
+	background: #bbb;
+	height: 60px;
+	margin-bottom: -10px;
+
+	input[type="text"] {
+		padding: 3px;
+		width: 300px;
+		border: none;
+		height: 40px;
+		margin-right: -15px;
+		float: left;
+	}
+	select {
+		background: #fff;
+		border: none;
+		width: 120px;
+		height: 40px;
+		outline: none;
+		padding: 5px;
+		margin-left: 20px;
+	}
+
+}
+
 .user {
 	ul {
-		.radius;
 		border: 1px solid #dedede;
 		background: #fff;
 		padding: 4px;
@@ -617,6 +651,13 @@ input, textarea {
 			list-style-type: none;
 			float: left;
 			margin: 0 30px;
+		}
+
+		&:hover {
+			-webkit-box-shadow: 0 2px 5px rgba(0,0,0,.2);
+			-moz-box-shadow: 0 2px 5px rgba(0,0,0,.2);
+			box-shadow: 0 2px 5px rgba(0,0,0,.2);
+			background-color: #f2f2f2;
 		}
 	}
 }
@@ -922,7 +963,6 @@ input, textarea {
 }
 
 .article-header {
-	.radius;
 	margin: 0 auto;
 	background: #333;
 	color: #fff;
@@ -964,7 +1004,6 @@ input, textarea {
 
 .article-manage-item {
 	ul {
-		.radius;
 		.transition(opacity);
 		border: 1px solid #dedede;
 		background: #fff;
@@ -995,6 +1034,13 @@ input, textarea {
 			width: 22%;
 			list-style-type: none;
 			float: left;
+		}
+
+		&:hover {
+			-webkit-box-shadow: 0 2px 5px rgba(0,0,0,.2);
+			-moz-box-shadow: 0 2px 5px rgba(0,0,0,.2);
+			box-shadow: 0 2px 5px rgba(0,0,0,.2);
+			background-color: #f2f2f2;
 		}
 	}
 }
@@ -1194,4 +1240,31 @@ input, textarea {
 			}
 		}
 	}
+}
+.ng-enter {
+	.transition(opacity);
+	opacity: 0;
+	margin-top: 120%;
+}
+
+.ng-enter.ng-enter-active {
+	opacity: 1;
+}
+
+.ng-leave {
+	.transition(opacity);
+	opacity: 1;
+}
+
+.ng-leave.ng-leave-active {
+	opacity: 0;
+}
+
+.ng-move {
+	.transition(opacity);
+	opacity: 0;
+}
+
+.ng-move.ng-move-active {
+	opacity: 1;
 }

@@ -1,18 +1,25 @@
 .userlist-wrap
 	h1 User list
-	.userlist-header.cf
-		ul
+	.controll-elem.cf
+		input(type="text" placeholder="Search user" ng-model="userSearch.username")
+		.v-line
+		label(for="sortSelect") Order by:
+		select(ng-model="sortSelect" name="sortSelect")
+			option(value="username") Username
+			option(value="email") Email
+			option(value="isAdmin") isAdmin
+	.userlist-header
+		ul.cf
 			li
-				p Nickname
+				p Username
 			li
 				P Email
 			li
 				p isAdmin
 			li
 				p Delete user
-	input(type="text" placeholder="search user" ng-model="userSearch")
 	.user
-		ul.cf(ng-repeat="user in users | filter: userSearch | orderBy: sortItem")
+		ul.cf(ng-repeat="user in users | filter: userSearch | orderBy: sortSelect")
 			li
 				p {{user.username}}
 			li
