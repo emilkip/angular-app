@@ -21,4 +21,23 @@ $(document).ready(function() {
 	$("#inp-new-photo").change(function(){
 		showImg(this);
 	});
+
+
+// Socket io
+
+	var socket = io('http://localhost:3000');
+
+	$("#chat").submit(function(e) {
+		e.preventDefault();
+		socket.emit('Msg', $("#inpMsg").val());
+		this.reset();
+	});
+
+	//$(".chat-cont").scrollTop($(".chat-msg-cont")[0].scrollHeight);
+
+	socket.on('Msg', function(username, avatar, date, msg) {
+		var $msgTemplate = '<div class="chat-msg-cont cf"><div class="chat-user-info"><img src="../../images/useravatar/' + avatar + '">' + '<h4>' + username + '</h4>' + '</div>' + '<div class="chat-msg"><p>' + msg + '</p>' + '<div class="chat-msg-time">' + date + '</div>' +  '</div>';
+
+		$('.chat-cont').append($msgTemplate).children(':last').hide().fadeIn(300);
+	});
 });

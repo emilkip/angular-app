@@ -1,5 +1,6 @@
-
 var express = require('express');
+var eSession = require('express-session');
+var mongoStore = require('connect-mongo')(eSession);
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var mongoose = require('mongoose');
@@ -7,14 +8,14 @@ var path = require('path');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
 var routes = require('./server-controller/route');
 var Users = require('./models/users');
 
 var app = express();
 
+
 // Mongodb configuration
-mongoose.connect('mongodb://localhost/angular_app', function(err) {
+mongoose.connect('mongodb://localhost/users', function(err) {
 	if(err) return console.log('Could not connect to MongoDB!');
 	console.log('Connected to mongodb');
 });
@@ -28,15 +29,17 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(require('express-session')({
+app.use(eSession({
 	secret: 'meow',
 	resave: false,
-	saveUninitialized: false
+	saveUninitialized: false,
+	store: new mongoStore({ mongooseConnection: mongoose.connection })
 }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 app.disable('x-powered-by');
+
 
 // Passport config
 passport.use(new LocalStrategy(Users.authenticate()));
@@ -66,4 +69,7 @@ app.use(function(err, req, res, next) {
 });
 
 
-module.exports = app;
+module.exports = {
+	app: app, 
+	mongoStore: mongoStore
+}

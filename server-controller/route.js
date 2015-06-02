@@ -7,12 +7,19 @@ var Users = require('../models/users');
 var Article = require('../models/articles');
 var gm = require('gm');
 var router = express.Router();
+var app = express();
 
-
-console.log(__dirname);
 
 router.get('/', function(req, res) {
 	res.render('index', { user : req.user });
+});
+
+router.get('/chat', function(req, res) {
+	if(!req.user) {
+		res.redirect('/');
+	} else {
+		res.render('chat', { user: req.user.username });
+	}
 });
 
 router.get('/part/:filename', function(req, res) {
@@ -166,6 +173,14 @@ router.delete('/admin_userlist/:id', function(req, res) {
 	});
 });
 
+router.get('/login', function(req, res) {
+	if(!req.user || !req.user.isAdmin) {
+		res.render('part/login',{});
+	} else {
+		res.redirect('/');
+	}
+});
+
 router.get('/logout', function(req, res) {
 	req.logout();
 	res.redirect('/');
@@ -173,7 +188,7 @@ router.get('/logout', function(req, res) {
 
 router.post('/login', passport.authenticate('local', {
 	successRedirect: '/',
-	failureRedirect: '/'
+	failureRedirect: '/login'
 }));
 
 router.post('/register', 

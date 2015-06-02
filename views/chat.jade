@@ -1,27 +1,23 @@
 doctype html
-html(ng-app="mainModule" class="no-js")
+html
 	head
 		meta(charset="utf-8")
 		meta(http-equiv="X-UA-Compatible", content="IE=edge")
 		meta(name="viewport", content="width=device-width, initial-scale=1")
 
-		base(href="/")
+		title Chat
 
-		title(ng-bind="title") Angular app
 		link(rel="stylesheet", href="/stylesheets/style.css")
 		link(rel="stylesheet", href="/bower_components/bootstrap/dist/css/bootstrap.min.css")
 		link(rel="stylesheet", href="/stylesheets/normalize.min.css")
+	body
+		.container
+			.col-sm-8.col-sm-offset-2.chat-warp
+				.chat-cont
+				form(action="" id="chat")
+					input(type="text" id="inpMsg" autocomplete="off")
+					button Send
 
-
-	body(ng-cloak)
-		<!--[if IE 8]>
-		p.chromeframe
-			| You are using an <strong>outdated</strong> browser.
-			| Please <a href="http://browsehappy.com/">upgrade your browser</a>
-			| to improve your experience.
-		<![endif]-->
-
-		block page
 
 		script(src="/socket.io/socket.io.js")
 		script(src="/javascripts/concat/app.js")

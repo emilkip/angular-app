@@ -1,0 +1,9 @@
+extends ../layout
+
+block page
+	.col-sm-4.col-sm-offset-4.signin
+		h3 Sign in
+		form(name="signin" action="/login" method="post")
+			input(type="text" name="username" placeholder="login")
+			input(type="password" name="password" placeholder="password")
+			button(type="Signin").btn.btn-primary Send

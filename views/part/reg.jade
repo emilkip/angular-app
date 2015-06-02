@@ -1,5 +1,5 @@
 .col-sm-6.col-sm-offset-3.reg-block(ng-show="showForm")
-	h3 Sign in
+	h3 Sign up
 	form(role="form", name="regForm", action="/register", method="post", ng-submit="createUser()", class="reg-form" enctype="multipart/form-data")
 		input(type="text", placeholder="Login", name="username", ng-change="checkUserNickname()", ng-model="userNickname", required)
 		input(type="email", placeholder="Email", name="email", ng-change="checkUserEmail()", ng-model="userEmail", required)
