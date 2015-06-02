@@ -25,7 +25,7 @@ $(document).ready(function() {
 
 // Socket io
 
-	var socket = io('http://localhost:3000');
+	var socket = io(location.host);
 
 	$("#chat").submit(function(e) {
 		e.preventDefault();
