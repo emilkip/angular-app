@@ -36,7 +36,7 @@ $(document).ready(function() {
 	//$(".chat-cont").scrollTop($(".chat-msg-cont")[0].scrollHeight);
 
 	socket.on('Msg', function(username, avatar, date, msg) {
-		var $msgTemplate = '<div class="chat-msg-cont cf"><div class="chat-user-info"><img src="../../images/useravatar/' + avatar + '">' + '<h4>' + username + '</h4>' + '</div>' + '<div class="chat-msg"><p>' + msg + '</p>' + '<div class="chat-msg-time">' + date + '</div>' +  '</div>';
+		var $msgTemplate = '<div class="chat-msg-cont cf"><div class="chat-user-info"><img src="/images/useravatar/350x350/' + avatar + '">' + '<h4>' + username + '</h4>' + '</div>' + '<div class="chat-msg"><p>' + msg + '</p>' + '<div class="chat-msg-time">' + date + '</div>' +  '</div>';
 
 		$('.chat-cont').append($msgTemplate).children(':last').hide().fadeIn(300);
 	});
