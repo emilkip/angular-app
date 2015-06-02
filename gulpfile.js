@@ -31,10 +31,10 @@ gulp.task('minifyCss', function() {
 
 gulp.task('watch', function() {
 	gulp.watch('public/javascripts/*.js', ['concat']);
-	gulp.watch('public/javascripts/concat/*.js', ['uglify']);
+	//gulp.watch('public/javascripts/concat/*.js', ['uglify']);
 	gulp.watch('public/stylesheets/less/*.less', ['less']);
 	gulp.watch('public/stylesheets/*.css', ['minifyCss']);
 });
 
 
-gulp.task('default', ['concat', 'uglify','less','minifyCss','watch']);
+gulp.task('default', ['concat','less','minifyCss','watch']);

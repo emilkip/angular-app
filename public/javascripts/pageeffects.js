@@ -25,7 +25,7 @@ $(document).ready(function() {
 
 // Socket io
 
-	var socket = io(location.host);
+	var socket = io('http://141.8.193.253:3000');
 
 	$("#chat").submit(function(e) {
 		e.preventDefault();
@@ -33,7 +33,6 @@ $(document).ready(function() {
 		this.reset();
 	});
 
-	//$(".chat-cont").scrollTop($(".chat-msg-cont")[0].scrollHeight);
 
 	socket.on('Msg', function(username, avatar, date, msg) {
 		var $msgTemplate = '<div class="chat-msg-cont cf"><div class="chat-user-info"><img src="/images/useravatar/350x350/' + avatar + '">' + '<h4>' + username + '</h4>' + '</div>' + '<div class="chat-msg"><p>' + msg + '</p>' + '<div class="chat-msg-time">' + date + '</div>' +  '</div>';
