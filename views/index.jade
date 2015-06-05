@@ -3,12 +3,12 @@ extends layout
 block page
 	.fixed-nav
 		.container
-			ul.nav
-				li
-					a(href="#!/main") Main
-				li
-					a(href="#!/content") Article
 			if (!user)
+				ul.nav
+					li
+						a(href="#!/main") Main
+					li
+						a(href="#!/content") Article
 				ul.auth
 					li
 						a(href="" id="login" ng-click="") Login
@@ -21,6 +21,13 @@ block page
 						input(type="password" name="password" placeholder="password")
 						button(type="Signin").btn.btn-primary Send
 			if (user)
+				ul.nav
+					li
+						a(href="#!/main") Main
+					li
+						a(href="#!/content") Article
+					li
+						a(href="/chat") Chat
 				if (user.isAdmin)
 					.profile-btn
 						a(href="" id="profile")

@@ -65,7 +65,7 @@ router.post('/create',
 		if(!req.files.thumb) {
 			var article = new Article({ header: req.body.header, text: req.body.text, author: req.user.username, publishDate: date, image: defaultUserPlaceholder });
 
-			article.save(function(err, article) {
+			article.save(function(err) {
 				if(err) console.log('Create error!');
 				res.redirect('/');
 			});
@@ -175,7 +175,7 @@ router.delete('/admin_userlist/:id', function(req, res) {
 
 router.get('/login', function(req, res) {
 	if(!req.user || !req.user.isAdmin) {
-		res.render('part/login',{});
+		res.render('part/login', {});
 	} else {
 		res.redirect('/');
 	}
@@ -187,9 +187,10 @@ router.get('/logout', function(req, res) {
 });
 
 router.post('/login', passport.authenticate('local', {
-	successRedirect: '/',
 	failureRedirect: '/login'
-}));
+}), function(req, res) {
+	res.redirect('/');
+});
 
 router.post('/register', 
 	multer({ dest: './public/images/useravatar/', 

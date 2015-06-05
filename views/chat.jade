@@ -12,13 +12,23 @@ html
 		link(rel="stylesheet", href="/stylesheets/normalize.min.css")
 	body
 		.container
-			.col-sm-8.col-sm-offset-2.chat-warp
-				.chat-cont
+			.col-md-7.col-md-offset-1.chat-warp
+				#chat-cont
 				form(action="" id="chat")
 					input(type="text" id="inpMsg" autocomplete="off")
 					button Send
+			.col-md-3
+				.chat-info-block
+					h3 Chat
+					p 
+						span.glyphicon.glyphicon-user
+						spna Online users
+					ul(id="online-user")
+					a(href="/") 
+						span.glyphicon.glyphicon-log-out
+						span Go to main
 
-
-		script(src="/socket.io/socket.io.js")
+		script(src="/javascripts/jquery.min.js")
 		script(src="/javascripts/concat/app.js")
+		script(src="/socket.io/socket.io.js")
 		script(src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js")
