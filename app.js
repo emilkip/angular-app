@@ -32,6 +32,7 @@ app.use(cookieParser());
 app.use(eSession({
 	secret: 'meow',
 	resave: false,
+	cookie: { maxAge: 604800000 },
 	saveUninitialized: false,
 	store: new mongoStore({ mongooseConnection: mongoose.connection })
 }));
