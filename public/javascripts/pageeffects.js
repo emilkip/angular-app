@@ -1,15 +1,40 @@
+$(window).load(function() {
+	$('.status').fadeOut();
+	$('.preloader').delay(350).fadeOut('slow');
+	$('body').delay(350).css({'overflow':'visible'});
+});
+
 $(document).ready(function() {
 
 // Login dropdown form
+// ------------------------------------------------------
 	$('#login').click(function() {
 		$('.auth-block').toggleClass('auth-active');
 	});
-
 	$('#profile').click(function() {
 		$('.profile-block').toggleClass('profile-active');
 	});
 
+// Profile block image
+// ------------------------------------------------------
+	var avatarImg = document.querySelector('.avatar-img');
+	var $avatarImg = $('.avatar-img');
+
+	function imageCenter(img, jimg) {
+		if(img) {
+			if (img.clientWidth == img.clientHeight) {
+				jimg.addClass('square-img');
+			} else if(img.clientWidth > img.clientHeight) {
+				jimg.addClass('horizontal-center');
+			} else {
+				jimg.addClass('vertical-center');
+			}
+		}
+	}
+	imageCenter(avatarImg,$avatarImg);
+
 // Change photo preview
+// ------------------------------------------------------
 	function showImg(inputPhoto) {
 		if (inputPhoto.files && inputPhoto.files[0]) {
 			var reader = new FileReader();
@@ -24,32 +49,21 @@ $(document).ready(function() {
 		showImg(this);
 	});
 
-// Socket io (chat)
-	var socket = io(location.host);
-
-	function chatContScrollToBottom() {
-		var chatElem = document.getElementById('chat-cont');
-		chatElem.scrollTop = chatElem.scrollHeight;
-	}
-
-	$("#chat").submit(function(e) {
-		e.preventDefault();
-		socket.emit('Msg', $("#inpMsg").val());
-		this.reset();
+	$('.modal-window-wrap').click(function() {
+		var avatarInput = $('#inp-new-photo');
+		avatarInput.replaceWith(avatarInput.val('').clone( true ));
+		$('#new-photo').attr('src', '/images/default-placeholder.png');
+		$('body').css('overflow', 'scroll');
 	});
 
-	socket.on('OnlineList', function(userlist) {
-		$('ul#online-user').empty();
-		userlist.forEach(function(item, i, arr) {
-			$('ul#online-user').append('<li id="' + userlist[i].username + '">' + userlist[i].username + '</li>').children(':last').hide().fadeIn(300);
-		});
+	$('.avatar-change-btn').click(function() {
+		$('body').css('overflow', 'hidden');
 	});
 
-	socket.on('Msg', function(username, avatar, date, msg) {
-		var $msgTemplate = '<div class="chat-msg-cont cf"><div class="chat-user-info"><img src="/images/useravatar/350x350/' + avatar + '">' + '<h4>' + username + '</h4>' + '</div>' + '<div class="chat-msg"><p>' + msg + '</p>' + '<div class="chat-msg-time">' + date + '</div>' +  '</div>';
+	$('.modal-window').css('display','block');
+	$('.modal-window-wrap').css('display','block');
 
-		$('#chat-cont').append($msgTemplate).children(':last').hide().fadeIn(300);
-		chatContScrollToBottom();
+// 
+// ------------------------------------------------------
 
-	});
 });

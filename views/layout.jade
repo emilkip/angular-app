@@ -1,5 +1,5 @@
 doctype html
-html(ng-app="mainModule" class="no-js")
+html(ng-app="mainModule" class="no-js default-skin custom-scroll")
 	head
 		meta(charset="utf-8")
 		meta(http-equiv="X-UA-Compatible", content="IE=edge")
@@ -13,7 +13,7 @@ html(ng-app="mainModule" class="no-js")
 		link(rel="stylesheet", href="/stylesheets/normalize.min.css")
 
 
-	body(ng-cloak)
+	body
 		<!--[if IE 8]>
 		p.chromeframe
 			| You are using an <strong>outdated</strong> browser.
@@ -23,6 +23,5 @@ html(ng-app="mainModule" class="no-js")
 
 		block page
 
-		script(src="/socket.io/socket.io.js")
 		script(src="/javascripts/concat/app.js")
 		script(src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js")

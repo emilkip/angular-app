@@ -2,6 +2,8 @@
 
 'use strict';
 
+// Main module
+// --------------------------------------------------
 var mainModule = angular.module('mainModule', [
 	'ngRoute',
 	'ngAnimate',
@@ -16,23 +18,28 @@ mainModule.config(['$routeProvider', '$locationProvider', function($routeProvide
 	$routeProvider
 		.when('/main', {
 			title: 'Angular app',
-			templateUrl: '/part/main.jade',
+			templateUrl: '/part/user-main.jade',
 			controller: 'mainPageCtrl'
 		})
 		.when('/content', {
 			title: 'Articles',
-			templateUrl: '/part/content.jade',
+			templateUrl: '/part/user-content.jade',
 			controller: 'articleListCtrl'
 		})
 		.when('/article/:articleId', {
-			title: 'Article: ',
-			templateUrl: '/part/article.jade',
+			title: '',
+			templateUrl: '/part/user-article.jade',
 			controller: 'articleIdCtrl'
 		})
 		.when('/reg', {
 			title: 'Sign in',
-			templateUrl: '/part/reg.jade',
+			templateUrl: '/part/user-reg.jade',
 			controller: 'formCtrl'
+		})
+		.when('/profile/:username', {
+			title: '',
+			templateUrl: '/part/user-profile.jade',
+			controller: 'profileCtrl'
 		})
 		.otherwise({
 			redirectTo: '/main'
@@ -50,6 +57,39 @@ mainModule.run(['$location', '$rootScope', function($location, $rootScope) {
 	});
 }]);
 
+// Mailbox module
+// --------------------------------------------------
+var mailboxModule = angular.module('mailboxModule', [
+	'ngRoute',
+	'appController',
+	'appService'
+]);
+
+mailboxModule.config(['$routeProvider',function($routeProvider) {
+	$routeProvider
+		.when('/inbox', {
+			templateUrl: 'part/mailbox-inbox.jade',
+			controller: 'mailboxInboxCtrl'
+		})
+		.when('/send', {
+			templateUrl: 'part/mailbox-send-list.jade',
+			controller: 'mailboxSendCtrl'
+		})
+		.when('/mail/:id', {
+			templateUrl: 'part/mailbox-mail.jade',
+			controller: 'mailCtrl'
+		})
+		.when('/compose', {
+			templateUrl: 'part/mailbox-compose.jade',
+			controller: 'composeCtrl'
+		})
+		.otherwise({
+			redirectTo: '/inbox'
+		})
+}]);
+
+// Admin module
+// --------------------------------------------------
 var adminModule = angular.module('adminModule', [
 	'ngRoute',
 	'appController',
@@ -59,11 +99,11 @@ var adminModule = angular.module('adminModule', [
 adminModule.config(['$routeProvider', function($routeProvider) {
 	$routeProvider
 		.when('/userlist', {
-			templateUrl: '/part/users.jade',
+			templateUrl: '/part/admin-users.jade',
 			controller: 'userListCtrl'
 		})
 		.when('/article', {
-			templateUrl: '/part/article-manage.jade',
+			templateUrl: '/part/admin-article.jade',
 			controller: 'articleCtrl'
 		})
 		.otherwise({

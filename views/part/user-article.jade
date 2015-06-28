@@ -1,0 +1,19 @@
+.col-sm-10.col-sm-offset-1.article-wrap.cf
+	.article-image
+		img(ng-src="/images/uploads/article_img/{{article.image}}", alt="")
+	.article-body
+		h1 {{article.header}}
+		hr
+		.text-block(ng-bind-html="html")
+		hr
+		ul.cf
+			li
+				p
+					b Author: 
+					| {{article.author}}
+			li
+				p
+					b Publish date: 
+					| {{article.publishDate}}
+		hr
+	dir-disqus(disqus-shortname="angular-app" disqus-identifier="{{ identifier }}" disqus-url="{{ url }}")

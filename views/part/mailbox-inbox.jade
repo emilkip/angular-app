@@ -1,0 +1,23 @@
+.col-md-12.inbox-wrap
+	.mailbox-header
+		h3 Inbox
+	.mailbox-mail-list
+		.mailbox-list-header.mailbox-table-row
+			ul.cf
+				li
+					p From
+				li
+					p Topic
+				li
+					p Date
+		.mailbox-list-item.mailbox-table-row
+			a(href="#/mail/{{mail._id}}" ng-repeat="mail in mail")
+				ul.cf(ng-class="{'unread-mail': !mail.wasRead}")
+					li(ng-bind="mail.from")
+					li(ng-bind="mail.topic")
+					li(ng-bind="mail.date")
+
+		.not-load-more(ng-show="notLoadMore")
+			p No more messages
+
+		button(ng-click="loadMoreMail()" ng-hide="notLoadMore").load-more-btn Load more

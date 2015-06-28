@@ -1,0 +1,20 @@
+.col-md-12.compose-wrap(ng-hide="msgSuccess")
+	.cp-header
+		h3 Compose
+	.cp-to
+		input(type="text", id="to", ng-model="user", ng-class="invalidClass", placeholder="To", required)
+		input(type="text", id="from", value="#{user.username}", ng-hide="true", readonly)
+		p(ng-bind="errNote" ng-class="errNoteClass")
+	.cp-topic
+		input(type="text", id="topic", ng-model="topic", placeholder="Topic", required)
+	.cp-text
+		textarea(id="msgText")
+	.cp-send-btn
+		button(ng-click="sendMessage()").load-more-btn Send
+
+.col-md-12.compose-success(ng-show="msgSuccess")
+	h3 Message sent
+	.checkmark-circle
+		.background
+		.checkmark.draw
+	.new-message.load-more-btn Send new message

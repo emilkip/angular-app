@@ -7,6 +7,8 @@ var cookieParser = require('cookie-parser');
 var Sessions = require('../models/sess');
 var Users = require('../models/users');
 var OnlineUser = require('../models/online-users');
+var ChatHistory = require('../models/chat-history');
+
 
 OnlineUser.remove({}, function(err) {
 	if(err) {
@@ -70,15 +72,42 @@ sio.on('connection', function(socket) {
 		});
 	});
 
+	ChatHistory.find({}, function(err, data) {
+
+		var dateNow = new Date();
+		var day = dateNow.getDay();
+		var notExpiredMsg = [];
+
+		data.forEach(function(item, i, arr) {
+			if(data[i].day != day) {
+				ChatHistory.findByIdAndRemove(data[i]._id, function(err) {
+					if(err) console.log(err);
+				});
+			} else {
+				notExpiredMsg.push(data[i]);
+			}
+		});
+		sio.emit('MsgHistory', notExpiredMsg);
+	});
+
 	socket.on('Msg', function(msg) {
 
 		var dateNow = new Date();
 		var hour = (dateNow.getHours()<10?'0':'') + dateNow.getHours();
 		var min = (dateNow.getMinutes()<10?'0':'') + dateNow.getMinutes();
 		var sec = (dateNow.getSeconds()<10?'0':'') + dateNow.getSeconds();
+		var day = dateNow.getDay();
 		var date = hour + ":" + min + ":" + sec;
 
 		sio.emit('Msg', username, avatar, date, msg);
+
+		Users.findOne({ username: username }, function(err, data) {
+			var msgToDB = new ChatHistory({ author: username, message: msg, msgTime: date, day: day, authorAvatar: data.avatar });
+			msgToDB.save(function(err) {
+				if (err) console.log(err);
+			})
+		});
+
 	});
 
 	socket.on('disconnect', function(){

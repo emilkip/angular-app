@@ -5,6 +5,7 @@ var articleSchema = new Schema({
 	header: String,
 	text: String,
 	author: String,
+	authorAvatar: String,
 	publishDate: String,
 	image: String
 });

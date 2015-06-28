@@ -3,7 +3,7 @@ carousel(current-index="selected" interval="4000")
 		img(ng-src="/images/uploads/article_img/{{article.image}}", alt="")
 		.caption
 			h3
-				a(href="#!/article/{{article._id}}") {{article.header | limitTo: 31}}
+				a(href="#!/article/{{article._id}}" ng-bind="article.header | limitTo: 31")
 			p Author: {{article.author}}
 
 .mp-hl.col-sm-12
@@ -22,16 +22,16 @@ carousel(current-index="selected" interval="4000")
 					li
 						.glyphicon.glyphicon-th-list(ng-click="changeSize(3)")
 
-.mp-ab-wrap(ng-repeat="article in articles | limitTo: 16" ng-class="class")
+.mp-ab-wrap(ng-repeat="article in articles" ng-class="articlesGroupClass")
 	.mp-article-block
 		.mp-ab-img
 			img(ng-src="/images/uploads/article_img/{{article.image}}", alt="")
 		.mp-ab-header
 			h3
-				a(href="#!/article/{{article._id}}") {{article.header | limitTo: 61}}
+				a(href="#!/article/{{article._id}}" ng-bind="article.header | limitTo: 61")
 		.other-article-data
 			ul
 				li
-					p {{article.author}}
+					a(href="#!/profile/{{article.author}}" ng-bind="article.author")
 				li
-					p {{article.publishDate}}
+					p(ng-bind="article.publishDate")
