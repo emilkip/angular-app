@@ -1,0 +1,57 @@
+.col-md-9.profile-wrap.cf
+	.pp-img-wrap
+		img(image-center, ng-src="/images/useravatar/350x350/{{user.avatar}}", id="profile-img", alt="")
+	.pp-info-wrap
+		h1 {{user.username}}
+
+.modal-msg-window-wrap(ng-show="show" ng-click="closeFormAndReset()")
+.modal-msg-window(ng-show="show")
+	.msg-form(ng-hide="msgSuccess")
+		.msg-to
+			h3 Send message to: {{user.username}}
+		input(type="text", id="from", name="from", value="#{user.username}" readonly style="display: none;")
+		input(type="text", id="to", name="to", value="{{user.username}}" readonly style="display: none;")
+		input(type="text", id="topic" name="topic", ng-model="msgTopic" placeholder="Topic").topic-inp
+		textarea(id="msgText", name="msgField" ng-model="msgField" placeholder="Your message")
+		button(ng-click="sendMsg()") Send
+	.msg-success(ng-show="msgSuccess")
+		h3 Message sent
+		.checkmark-circle
+			.background
+			.checkmark.draw
+
+.col-md-3.profile-action-wrap
+	#profile-action-user.pa-wrap-style
+		#pa-message.pa-btn
+			span.glyphicon.glyphicon-envelope
+			span Mailbox
+		#pa-edit.pa-btn
+			span.glyphicon.glyphicon-pencil
+			span Edit profile
+		#pa-logout.pa-btn
+			span.glyphicon.glyphicon-log-out
+			span Logout
+	#profile-action-other-user.pa-wrap-style
+		#pa-send-msg.pa-btn(ng-click="show = true")
+			span.glyphicon.glyphicon-envelope
+			span Send message
+		#pa-add-friend.pa-btn
+			span.glyphicon.glyphicon-user
+			span Add as friend
+
+
+
+.col-sm-12.profile-articles-wrap.cf
+	h3 Articles published by {{user.username}}
+
+	ul(ng-repeat="article in articles")
+		li.cf
+			span#pa-article-header 
+				a(href="#!/article/{{article._id}}") {{article.header}}
+			span#pa-article-date {{article.publishDate}}
+	.not-load-more(ng-show="notLoadMore")
+			p No more articles
+	.loader(ng-show="showLoader")
+		img(src="/images/article_preloader.gif", alt="preloader")
+
+	.load-more-btn(ng-click="loadMoreUserArticles()" ng-hide="notLoadMore") Load more

@@ -1,8 +1,14 @@
 extends layout
 
 block page
-	.fixed-nav
+
+	.preloader
+		.status
+
+	.fixed-nav(ng-controller="navCtrl" ng-cloak)
 		.container
+
+			//- If not authorized user
 			if (!user)
 				ul.nav
 					li
@@ -16,10 +22,12 @@ block page
 						a(href="#!/reg") Sign up
 				.auth-block
 					h3 Sign in
-					form(name="signin" action="/login" method="post")
+					form(name="signin" action="/login" method="post" autocomplete="off")
 						input(type="text" name="username" placeholder="login")
 						input(type="password" name="password" placeholder="password")
 						button(type="Signin").btn.btn-primary Send
+
+			//- If authorized user
 			if (user)
 				ul.nav
 					li
@@ -28,37 +36,75 @@ block page
 						a(href="#!/content") Article
 					li
 						a(href="/chat") Chat
+
+				//- If admin
 				if (user.isAdmin)
 					.profile-btn
 						a(href="" id="profile")
 							img(src="/images/useravatar/350x350/" + user.avatar, alt="")
 							p #{user.username}
-					.admin-btn
+					.mailbox-btn(ng-click="showLastMsg()")
+						span#msg-icon.glyphicon.glyphicon-envelope
+						span#msg-count(ng-bind="msgCount")
+					.mb-new-msg-block(ng-class="mbNewMsgBlock")
+						ul
+							li(ng-repeat="message in newMsg")
+								a(href="mailbox#/mail/{{message._id}}")
+								.mb-from
+									a(href="#!/profile/{{message.from}}" ng-bind="message.from")
+								.mb-date(ng-bind="message.date")
+								.mb-text(ng-bind="message.topic")
+						a(href="/mailbox" ng-hide="noMsgNote").load-more-btn Go to mailbox
+						.no-msg-note(ng-show="noMsgNote") 
+							span.glyphicon.glyphicon-envelope
+							p No new messages
+							a(href="/mailbox").load-more-btn Go to mailbox
+					.new-article-btn
 						a(href="/create") New article
 					.profile-block(ng-hide="show")
 						.pb-img-wrap
-							img(src="/images/useravatar/350x350/" + user.avatar, alt="")
+							img(class="avatar-img" src="/images/useravatar/350x350/" + user.avatar, alt="")
 							button(ng-click="show = true").avatar-change-btn Change photo
 						.pb-userinfo-wrap
 							p.username #{user.username}
 							p.pb-u-email #{user.email}
 							a(href="/logout").admin-logout Logout
 							a(href="/admin").admin-panel-btn Admin panel
+
+				//- If user, but not admin
 				if (!user.isAdmin)
 					.profile-btn
 						a(href="" id="profile")
 							img(src="/images/useravatar/350x350/" + user.avatar, alt="")
 							p #{user.username}
-					.admin-btn
+					.mailbox-btn(ng-click="showLastMsg()")
+						span#msg-icon.glyphicon.glyphicon-envelope
+						span#msg-count(ng-bind="msgCount")
+					.mb-new-msg-block(ng-class="mbNewMsgBlock")
+						ul
+							li(ng-repeat="message in newMsg")
+								a(href="mailbox#/mail/{{message._id}}")
+								.mb-from
+									a(href="#!/profile/{{message.from}}" ng-bind="message.from")
+								.mb-date(ng-bind="message.date")
+								.mb-text(ng-bind="message.topic")
+						a(href="/mailbox").load-more-btn Go to mailbox
+						.no-msg-note(ng-show="noMsgNote")
+							span.glyphicon.glyphicon-envelope
+							p No new messages
+							a(href="/mailbox").load-more-btn Go to mailbox
+					.new-article-btn
 						a(href="/create") New article
 					.profile-block(ng-hide="show")
 						.pb-img-wrap
-							img(src="/images/useravatar/350x350/" + user.avatar, alt="")
+							img(class="avatar-img" src="/images/useravatar/350x350/" + user.avatar, alt="")
 							button(ng-click="show = true").avatar-change-btn Change photo
 						.pb-userinfo-wrap
 							p.username #{user.username}
 							p.pb-u-email #{user.email}
 							a(href="/logout").user-logout Logout
+
+		//- modal window - change photo
 		.modal-window-wrap(ng-show="show" ng-click="show = false")
 		.modal-window(ng-show="show")
 			if (user)
@@ -68,4 +114,4 @@ block page
 					input(type="file", name="avatar", id="inp-new-photo", accept="image/*")
 					button(type="submit") Save
 
-	.view.container(ng-view)
+	.view.container(ng-view autoscroll="")

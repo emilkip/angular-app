@@ -4,58 +4,114 @@
 
 var appController = angular.module('appController', ['ngAnimate']);
 
-appController.controller('mainPageCtrl', ['$scope','Article',
-	function($scope, Article){
+// User side: Check new message
+// --------------------------------------------------
+appController.controller('navCtrl', ['$scope','$http', function($scope, $http){
 
-		Article.api.query(function(data) {
-			function custom_sort(a,b) {
-				return new Date(a.publishDate).getTime() - new Date(b.publishDate).getTime();
+	$scope.noMsgNote = false;
+
+	$http({
+		method: 'POST',
+		url: '/check_mailbox'
+	}).
+	success(function(data, status, headers, config) {
+		$scope.msgCount = data.msgCount;
+
+		if ($scope.msgCount == 0) {
+			$scope.noMsgNote = true;
+		}
+	});
+
+	$scope.mbNewMsgBlock = 'mb-dropdown-hide';
+
+	$scope.showLastMsg = function() {
+
+		if($scope.mbNewMsgBlock == 'mb-dropdown-hide') {
+
+			if($scope.newMsg) {
+				$scope.mbNewMsgBlock = 'mb-dropdown-show';
+				return;
+			} else {
+				$http({
+					method: 'GET',
+					url: '/last_message'
+				})
+				.success(function(data, status, headers, config) {
+					$scope.newMsg = data;
+				});
+				$scope.mbNewMsgBlock = 'mb-dropdown-show';
 			}
-			data.sort(custom_sort);
-			$scope.articles = data.reverse();
+		} else {
+			$scope.mbNewMsgBlock = 'mb-dropdown-hide';
+		}
+	}
+}]);
+
+// User side: Main page controller
+// --------------------------------------------------
+appController.controller('mainPageCtrl', ['$scope','LastArticle',
+	function($scope, LastArticle){
+
+		LastArticle.api.query(function(data) {
+			$scope.articles = data;
 		});
 
 		$scope.selectSlide = function(i) {
 			$scope.selected = i;
 		}
 
-		$scope.class = 'col-sm-3';
+		$scope.articlesGroupClass = 'col-sm-3';
 
 		$scope.changeSize = function(btnNum) {
 			switch(btnNum) {
 				case 1:
-					$scope.class = 'col-sm-3';
+					$scope.articlesGroupClass = 'col-sm-3';
 					break;
 				case 2:
-					$scope.class = 'col-sm-6';
+					$scope.articlesGroupClass = 'col-sm-6';
 					break;
 				case 3:
-					$scope.class = 'col-sm-12';
+					$scope.articlesGroupClass = 'col-sm-12';
 					break;
 			}
 		}
 }]);
 
-// Client side: Reg form validation
+// User side: Reg form validation
+// --------------------------------------------------
 appController.controller('formCtrl', ['$scope', 'User',
 	function($scope, User) {
 
-		var data = User.api.query();
-		$scope.checker = false;
-		$scope.showForm = true;
-		$scope.showSuccessMsg = false;
-		$scope.us = data;
+		var validClass = 'ng-valid';
+		var invalidClass = 'ng-invalid';
+		$scope.users = User.api.query();
 
 		$scope.checkUserNickname = function() {
-			$scope.users = data;
 			for(var i = 0; i < $scope.users.length; i++) {
 				if ($scope.users[i].username == $scope.userNickname) {
 					$scope.note = 'Nickname "' + $scope.userNickname + '" already exist!';
-					$scope.checker = true;
+					$scope.nicknameCheck = true;
+					$scope.nicknameCheckClass = invalidClass;
 					return false;
 				} else {
 					$scope.note = '';
-					$scope.checker = false;
+					$scope.nicknameCheck = false;
+					$scope.nicknameCheckClass = validClass;
+				}
+			}
+		}
+
+		$scope.checkUserEmail = function() {
+			for(var i = 0; i < $scope.users.length; i++) {
+				if ($scope.users[i].email == $scope.userEmail) {
+					$scope.note = $scope.userEmail + '" already exist!';
+					$scope.emailCheck = true;
+					$scope.emailCheckClass = invalidClass;
+					return false;
+				} else {
+					$scope.note = '';
+					$scope.emailCheck = false;
+					$scope.emailCheckClass = validClass;
 				}
 			}
 		}
@@ -63,15 +119,332 @@ appController.controller('formCtrl', ['$scope', 'User',
 		$scope.checkConfirm = function() {
 			if ($scope.userPass !== $scope.confirmPass) {
 					$scope.note = 'Ivalid confirm pass!';
-					$scope.checker = true;
+					$scope.passCheck = true;
+					$scope.passCheckClass = invalidClass;
 			} else {
 				$scope.note = '';
-				$scope.checker = false;
+				$scope.passCheck = false;
+				$scope.passCheckClass = validClass;
 			}
 		}
 }]);
 
+// User side: content page controller
+// --------------------------------------------------
+appController.controller('articleListCtrl', ['$scope','$http', 'User',
+	function($scope, $http, User) {
+
+		$http.get('/articles')
+			.success(function(data, status, headers, config) {
+				$scope.articles = data.article;
+				$scope.articles.forEach(function(item, i, arr) {
+					$scope.articles[i].text = $scope.articles[i].text.replace(/<\/?[^>]+>/g,' ');
+				});
+			})
+			.error(function(data, status, headers, config) {
+				console.log('Error');
+			});
+
+		var page = 1;
+
+		$scope.onScrollToEnd = function(checker) {
+			if(checker) {
+				page++;
+				$scope.showLoader = true;
+				$scope.notLoadMore = false;
+
+				$http.get('/articles/' + page)
+					.success(function(data, status, headers, config) {
+
+						if(data.article == '') {
+							$scope.notLoadMore = true;
+						}
+
+						var article = data.article;
+
+						article.forEach(function(item, i, arr) {
+							$scope.articles.push(article[i]);
+						});
+
+						$scope.articles.forEach(function(item, i, arr) {
+							$scope.articles[i].text = $scope.articles[i].text.replace(/<\/?[^>]+>/g,' ');
+						});
+
+						$scope.showLoader = false;
+					})
+					.error(function(data, status, headers, config) {
+						console.log('Error');
+					});
+			}
+		}
+
+}]);
+
+// User side: User profile page controller
+// --------------------------------------------------
+appController.controller('profileCtrl', ['$rootScope','$scope','User','$routeParams','$location','$http', 
+	function($rootScope, $scope, User, $routeParams, $location, $http){
+		User.api.get({ username: $routeParams.username }, function(data) {
+			if(data.hasOwnProperty('username')) {
+				$scope.user = data;
+				$http.get('/profile/' + $scope.user.username)
+					.success(function(data, status, headers, config) {
+						if(data != true) {
+							var profileActionBtn = document.querySelector('#profile-action-user');
+							profileActionBtn.parentNode.removeChild(profileActionBtn);
+						} else {
+							var profileActionBtn = document.querySelector('#profile-action-other-user');
+							profileActionBtn.parentNode.removeChild(profileActionBtn);
+						}
+					});
+
+				var author = $scope.user.username;
+				var page = 1;
+				$rootScope.title = 'Profile: ' + $scope.user.username;
+				$scope.msgSuccess = false;
+
+				$scope.closeFormAndReset = function() {
+					$scope.show = false;
+					$scope.msgSuccess = false;
+					$scope.msgField = $scope.msgTopic = ''; 
+				}
+
+				// Send message
+				$scope.sendMsg = function() {
+					$scope.from = document.getElementById('from').value;
+					$scope.to = document.getElementById('to').value;
+					$scope.topic = document.getElementById('topic').value;
+					$scope.msgText = document.getElementById('msgText').value;
+
+					$http({
+						method: 'POST',
+						url: '/message',
+						data: {from: $scope.from, to: $scope.to, topic: $scope.topic, text: $scope.msgText }
+					})
+					.success(function(data, status, headers, config) {
+						$scope.msgSuccess = true;
+					});
+				}
+
+				$http.get('/articles/' + author + '/' + page)
+					.success(function(data, status, headers, config) {
+						$scope.articles = data.articles;
+					}).
+					error(function(data, status, headers, config) {
+						console.log('Error');
+					});
+
+				$scope.loadMoreUserArticles = function() {
+					page++;
+					$scope.showLoader = true;
+					$scope.notLoadMore = false;
+
+					$http.get('/articles/' + author + '/' + page)
+						.success(function(data, status, headers, config) {
+
+							if(data.articles == '') {
+								$scope.notLoadMore = true;
+							}
+
+							var article = data.articles;
+
+							article.forEach(function(item, i, arr) {
+								$scope.articles.push(article[i]);
+							});
+
+							$scope.showLoader = false;
+						})
+						.error(function(data, status, headers, config) {
+							console.log('Error');
+						});
+				}
+			} else {
+				$location.path('/');
+			}
+		});
+}])
+
+// User side: Article page controller
+// --------------------------------------------------
+appController.controller('articleIdCtrl', ['$rootScope','$scope','Article','$routeParams','$sce',
+	function($rootScope, $scope, Article, $routeParams, $sce) {
+		Article.api.get({ id: $routeParams.articleId }, function(data) {
+			$scope.article = data;
+			$rootScope.title = $scope.article.header;
+			$scope.html = $sce.trustAsHtml($scope.article.text);
+		});
+}]);
+
+// User side: Mailbox main page controller
+// --------------------------------------------------
+appController.controller('mailboxMainCtrl', ['$scope','$http','MsgCount', 
+	function($scope, $http, MsgCount){
+
+		$http.post('/check_mailbox')
+			.success(function(data, status, headers, config) {
+				MsgCount.count = data.msgCount;
+			});
+
+		$scope.msgCount = MsgCount;
+}]);
+
+// User side: inbox controller
+// --------------------------------------------------
+appController.controller('mailboxInboxCtrl', ['$scope','$http','$location','MsgCount', 
+	function($scope, $http, $location, MsgCount){
+		var page = 1;
+
+		$http.post('/check_mailbox')
+			.success(function(data, status, headers, config) {
+				MsgCount.count = data.msgCount;
+			});
+
+		$http.get('/inbox/' + user + '/' + page)
+			.success(function(data, status, headers, config) {
+				$scope.mail = data;
+				$scope.mail.forEach(function(item, i, arr) {
+					$scope.mail[i].text = $scope.mail[i].text.replace(/<\/?[^>]+>/g,' ');
+				});
+			})
+			.error(function(data, status, headers, config) {
+				console.log('Error');
+			});
+
+		$scope.loadMoreMail = function() {
+			page++;
+			$scope.showLoader = true;
+			$scope.notLoadMore = false;
+
+			$http.get('/inbox/' + user + '/' + page)
+				.success(function(data, status, headers, config) {
+
+					if(data == '') {
+						$scope.notLoadMore = true;
+					} else {
+						var mail = data;
+						mail.forEach(function(item, i, arr) {
+							$scope.mail.push(mail[i]);
+						});
+					}
+				})
+				.error(function(data, status, headers, config) {
+					console.log('Error');
+				});
+		}
+
+}]);
+
+// User side: send message controller
+// --------------------------------------------------
+appController.controller('mailboxSendCtrl', ['$scope','$http','MsgCount', 
+	function($scope, $http, MsgCount){
+		var page = 1;
+
+		$http.get('/send/' + user + '/' + page)
+			.success(function(data, status, headers, config) {
+				$scope.mail = data;
+				$scope.mail.forEach(function(item, i, arr) {
+					$scope.mail[i].text = $scope.mail[i].text.replace(/<\/?[^>]+>/g,' ');
+				});
+			})
+			.error(function(data, status, headers, config) {
+				console.log('Error');
+			});
+
+		$scope.loadMoreMail = function() {
+			page++;
+			$scope.showLoader = true;
+			$scope.notLoadMore = false;
+
+			$http.get('/send/' + user + '/' + page)
+				.success(function(data, status, headers, config) {
+
+					if(data == '') {
+						$scope.notLoadMore = true;
+					} else {
+						var mail = data;
+						mail.forEach(function(item, i, arr) {
+							$scope.mail.push(mail[i]);
+						});
+					}
+				})
+				.error(function(data, status, headers, config) {
+					console.log('Error');
+				});
+		}
+}]);
+
+// User side: compose page controller
+// --------------------------------------------------
+appController.controller('composeCtrl', ['$scope','$http','User', 
+	function($scope, $http, User){
+
+		$scope.users = User.api.query();
+		$scope.isExist = false;
+		$scope.errNoteClass = 'cp-err-note-hide';
+
+		$scope.checkUserExist = function() {
+			for(var i = 0; i < $scope.users.length; i++) {
+				if($scope.users[i].username == $scope.user) {
+					$scope.isExist = true;
+					return false;
+				} else {
+					$scope.isExist = false;
+				}
+			};
+		}
+
+		$scope.sendMessage = function() {
+			$scope.from = document.getElementById('from').value;
+			$scope.to = document.getElementById('to').value;
+			$scope.topic = document.getElementById('topic').value;
+			$scope.msgText = document.getElementById('msgText').value;
+			$scope.checkUserExist();
+
+			if($scope.user == $scope.from) {
+				$scope.errNote = 'You can not send the message to yourself';
+				$scope.invalidClass = 'mb-msg-err-invalid';
+				$scope.errNoteClass = 'cp-err-note-show';
+			} else if($scope.isExist == true) {
+				$http({
+					method: 'POST',
+					url: '/message',
+					data: {from: $scope.from, to: $scope.to, topic: $scope.topic, text: $scope.msgText }
+				})
+				.success(function(data, status, headers, config) {
+				});
+					$scope.msgSuccess = true;
+					$scope.errNote = '';
+			} else {
+				$scope.msgSuccess = false;
+				$scope.invalidClass = 'mb-msg-err-invalid';
+				$scope.errNoteClass = 'cp-err-note-show';
+				$scope.errNote = 'User: "' + $scope.to + '" not exist';
+			}
+		}
+}]);
+
+// User side: Single mail page controller
+// --------------------------------------------------
+appController.controller('mailCtrl', ['Mail','$scope','$http','$routeParams','$sce','$location', 
+	function( Mail, $scope, $http, $routeParams, $sce, $location){
+		Mail.api.getMail({ id: $routeParams.id }, function(data) {
+			$scope.mail = data;
+			$scope.html = $sce.trustAsHtml($scope.mail.text);
+
+			if($scope.mail.wasRead == false) {
+				Mail.api.readIsTrue({ id: $scope.mail._id });
+			}
+
+			$scope.deleteMessage = function() {
+				Mail.api.remove({ id: $scope.mail._id });
+				$location.path('/mailbox');
+			}
+		});
+}]);
+
 // Admin side: user management
+// --------------------------------------------------
 appController.controller('userListCtrl', ['$scope','AdminUserlist',
 	function($scope, AdminUserlist){
 		AdminUserlist.api.query(function(data) {
@@ -93,48 +466,50 @@ appController.controller('userListCtrl', ['$scope','AdminUserlist',
 		});
 }]);
 
-// Client side
-appController.controller('articleListCtrl', ['$scope','Article',
-	function($scope, Article) {
-		Article.api.query(function(data) {
+// Admin side: articles management controller
+appController.controller('articleCtrl', ['$scope','$http','Article',
+	function($scope, $http, Article) {
+		Article.adminApi.get(function(data) {
 
 			function custom_sort(a,b) {
 				return new Date(a.publishDate).getTime() - new Date(b.publishDate).getTime();
 			}
-			data.sort(custom_sort);
-			$scope.articles = data.reverse();
-		});
+			data.article.sort(custom_sort);
 
-		$scope.onScrollToEnd = function(checker) {
-			if(checker) $scope.lim += 5;
-		}
+			$scope.articles = data.article.reverse();
 
-	$scope.limit = 5;
-	$scope.lim = 5;
-}]);
+			var page = 1;
 
-appController.controller('articleIdCtrl', ['$scope','Article','$routeParams',
-	function($scope, Article, $routeParams) {
-		Article.api.get({ id: $routeParams.articleId }, function(data) {
-			$scope.article = data;
-		});
-}]);
+			$scope.loadMoreArticles = function() {
+				page++;
 
-// Admin side: article management
-appController.controller('articleCtrl', ['$scope','Article',
-	function($scope, Article) {
-		Article.api.query(function(data) {
+				$http.get('/articles/' + page)
+					.success(function(data, status, headers, config) {
 
-			function custom_sort(a,b) {
-				return new Date(a.publishDate).getTime() - new Date(b.publishDate).getTime();
+						if(data.article == '') {
+							$scope.notLoadMore = true;
+						}
+
+						var article = data.article;
+
+						article.forEach(function(item, i, arr) {
+							$scope.articles.push(article[i]);
+						});
+
+						$scope.articles.forEach(function(item, i, arr) {
+							$scope.articles[i].text = $scope.articles[i].text.replace(/<\/?[^>]+>/g,' ');
+						});
+
+						$scope.showLoader = false;
+					})
+					.error(function(data, status, headers, config) {
+						console.log('Error');
+					});
 			}
-			data.sort(custom_sort);
-
-			$scope.articles = data.reverse();
 
 			$scope.remove = function(article) {
 				var index = $scope.articles.indexOf(article);
-				Article.api.remove({ id: article._id });
+				Article.adminApi.delete({ id: article._id });
 				$scope.articles.splice(index, 1);
 			}
 

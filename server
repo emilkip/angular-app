@@ -7,7 +7,8 @@
 var app = require('./app').app;
 var debug = require('debug')('expr4:server');
 var http = require('http').Server(app);
-var sio = require('./server-controller/socket').listen(http);
+var sio = require('./server-controller/chat.socket.io').listen(http);
+// var sio2 = require('./server-controller/mailbox.socket.io').listen(3001);
 
 
 /**

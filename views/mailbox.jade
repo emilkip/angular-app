@@ -1,0 +1,37 @@
+doctype html
+html(ng-app="mailboxModule")
+	head
+		title Angular app: Mailbox
+		link(rel="stylesheet", href="/stylesheets/style.css")
+		link(rel='stylesheet', href="/bower_components/bootstrap/dist/css/bootstrap.min.css")
+		link(rel="stylesheet", href="/stylesheets/normalize.min.css")
+
+	body(ng-cloak)
+		.col-md-10.col-md-offset-1.mailbox-wrap(ng-controller="mailboxMainCtrl")
+			.col-md-3.no-padding
+				.mailbox-nav
+					.compose-btn
+						a(href="#/compose")
+							span.glyphicon.glyphicon-pencil
+							| Compose
+					ul
+						li
+							a(href="#/inbox")
+								span.glyphicon.glyphicon-envelope
+								| Inbox
+								span.inbox-count(ng-bind="msgCount.count")
+						li
+							a(href="#/send")
+								span.glyphicon.glyphicon-send
+								| Send message
+						li
+							a(href="/")
+								span.glyphicon.glyphicon-log-out
+								| Go to main
+
+			.col-md-9.no-padding
+				.mailbox-view(ng-view)
+
+		script(src="/javascripts/concat/app.js")
+		script.
+			var user = '#{user.username}';

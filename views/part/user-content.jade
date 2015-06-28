@@ -1,0 +1,35 @@
+.col-sm-8(scroll="onScrollToEnd(checker)")
+	.col-sm-12.article-list-wrap(ng-repeat="article in articles")
+		.article-thumb
+			img(ng-src="/images/uploads/article_img/{{article.image}}", alt="")
+		.author-block
+			.author-block-avatar
+				img(image-center, id="avatar-img" src="/images/useravatar/350x350/{{article.authorAvatar}}", alt="")
+			.author-block-name
+				a(href="#!/profile/{{article.author}}" ng-bind="article.author")
+		.col-sm-10.col-sm-offset-1.text-wrap.cf
+			h1
+				a(href="#!/article/{{article._id}}" ng-bind="article.header")
+			hr
+			p.article-text(ng-bind="article.text | limitTo: 400") ...
+			a(href="#!/article/{{article._id}}").btn.btn-default Read more
+			hr
+			.publish-data
+				p
+					b Publish date: 
+					span(ng-bind="article.publishDate")
+	.col-sm-12
+		.not-load-more(ng-show="notLoadMore")
+			p No more articles
+	.col-sm-12.loader(ng-show="showLoader")
+		img(src="/images/article_preloader.gif", alt="preloader")
+
+
+.col-sm-4.last-news-block
+	h3 Last news
+	hr
+	ul
+		li(ng-repeat="article in articles | limitTo: 7")
+			a(href="#!/article/{{article._id}}" ng-bind="article.header")
+			p {{article.author}} | {{article.publishDate}}
+			hr

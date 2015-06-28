@@ -16,12 +16,22 @@ node_modules
 **/uploads/article_img/*.jpg
 **/uploads/article_img/*.jpeg
 **/uploads/article_img/*.png
+**/uploads/article_img/*.GIF
+**/uploads/article_img/*.JPG
+**/uploads/article_img/*.JPEG
+**/uploads/article_img/*.PNG
 
 **/useravatar/350x350/*.gif
 **/useravatar/350x350/*.jpg
 **/useravatar/350x350/*.jpeg
 **/useravatar/350x350/*.png
+**/useravatar/350x350/*.GIF
+**/useravatar/350x350/*.JPG
+**/useravatar/350x350/*.JPEG
+**/useravatar/350x350/*.PNG
 
 !**/default-placeholder.png
 !**/article-placeholder.png
 !**/user-placeholder.png
+!**/preloader.gif
+!**/article_preloader.gif

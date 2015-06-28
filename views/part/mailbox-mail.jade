@@ -1,0 +1,25 @@
+.col-md-12.single-mail
+	.row
+		.col-xs-10.single-mail-header.cf
+			span Topic: 
+			h3(ng-bind="mail.topic")
+
+		.col-sm-2.single-mail-btn
+			button.btn.btn-danger(ng-click="deleteMessage()")
+				span.glyphicon.glyphicon-trash
+				| Delete
+
+	.single-mail-info.cf
+		.mail-sender-info
+			.mail-info-from
+				span From: 
+				p(ng-bind="mail.from")
+			.mail-info-to
+				span To: 
+				p(ng-bind="mail.to")
+		.mail-date-info
+			span.glyphicon.glyphicon-calendar
+			| {{mail.date}}
+
+	.single-mail-text
+		p(ng-bind-html="html")

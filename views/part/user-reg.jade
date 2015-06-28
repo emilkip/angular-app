@@ -1,0 +1,11 @@
+.col-sm-6.col-sm-offset-3.reg-block
+	h3 Sign up
+	form(role="form", name="regForm", action="/register", method="post", class="reg-form" enctype="multipart/form-data")
+		input(type="text", placeholder="Login", name="username", ng-class="nicknameCheckClass", ng-change="checkUserNickname()", ng-model="userNickname", required)
+		input(type="email", placeholder="Email", name="email", ng-class="emailCheckClass", ng-change="checkUserEmail()", ng-model="userEmail", required)
+		input(type="password", placeholder="Password", name="password", ng-class="passCheckClass", ng-model="userPass", required)
+		input(type="password", placeholder="Confirm password", ng-class="passCheckClass", ng-change="checkConfirm()", name="confirmPass", ng-model="confirmPass", required)
+		input(type="file", name="avatar", accept="image/*")
+		button(type="submit", class="btn btn-primary", ng-disabled="nicknameCheck || emailCheck || passCheck") Send
+		.error-msg(ng-show="nicknameCheck || emailCheck || passCheck")
+			p {{note}}
