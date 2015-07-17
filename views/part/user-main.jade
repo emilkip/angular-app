@@ -1,6 +1,6 @@
 carousel(current-index="selected" interval="4000")
 	slide(ng-repeat="article in articles | limitTo: 3" active="article.active")
-		img(ng-src="/images/uploads/article_img/{{article.image}}", alt="")
+		img(ng-src="/images/uploads/article_img/{{article.image}}", alt="{{article.header}}")
 		.caption
 			h3
 				a(href="#!/article/{{article._id}}" ng-bind="article.header | limitTo: 31")
@@ -25,7 +25,7 @@ carousel(current-index="selected" interval="4000")
 .mp-ab-wrap(ng-repeat="article in articles" ng-class="articlesGroupClass")
 	.mp-article-block
 		.mp-ab-img
-			img(ng-src="/images/uploads/article_img/{{article.image}}", alt="")
+			img(ng-src="/images/uploads/article_img_mini/{{article.image}}", alt="{{article.header}}")
 		.mp-ab-header
 			h3
 				a(href="#!/article/{{article._id}}" ng-bind="article.header | limitTo: 61")

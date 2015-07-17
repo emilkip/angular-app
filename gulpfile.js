@@ -24,7 +24,7 @@ gulp.task('uglify', function() {
 });
 
 gulp.task('minifyCss', function() {
-	return gulp.src('public/stylesheets/style.css')
+	return gulp.src('public/stylesheets/*.css')
 		.pipe(minifyCss())
 		.pipe(gulp.dest('public/stylesheets'));
 });

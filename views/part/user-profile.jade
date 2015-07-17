@@ -2,7 +2,45 @@
 	.pp-img-wrap
 		img(image-center, ng-src="/images/useravatar/350x350/{{user.avatar}}", id="profile-img", alt="")
 	.pp-info-wrap
-		h1 {{user.username}}
+		.pp-info-username
+			h1 {{user.username}}
+		.pp-info-other
+			.pp-info-other-country
+				span.glyphicon.glyphicon-globe
+				span.file-name Country:
+				span.bind-text(ng-bind="user.country")
+			.pp-info-other-birthdate
+				span.glyphicon.glyphicon-calendar
+				span.file-name Date of birth:
+				span.bind-text(ng-bind="user.birthday")
+			.pp-info-other-site
+				span.glyphicon.glyphicon-link
+				span.file-name Site:
+				span.bind-text
+					a(href="{{user.site}}" ng-bind="user.site | limitTo: 45" target="blank")
+
+.modal-window-wrap(ng-show="profileEditModal" ng-click="profileEditModal = false")
+.pp-ep-modal(ng-show="profileEditModal")
+	.pp-ep-header
+		h3 Profile edit
+		p Add more information about yourself
+	.pp-ep-form
+		form(action="/profile/#{user._id}" method="post")
+			.pp-ep-input
+				label.glyphicon.glyphicon-globe(for="country")
+				span Country:
+				select(name="country")
+					option(ng-repeat="country in country" value="{{country.name}}" ng-bind="country.name")
+			.pp-ep-input
+				label.glyphicon.glyphicon-calendar(for="date")
+				span Date of birth:
+				input(type="date" name="date" required)
+			.pp-ep-input
+				label.glyphicon.glyphicon-link(for="site")
+				span URL:
+				input(type="url" name="site" placeholder="Your site or page" required)
+			button(type="submit").load-more-btn Save
+
 
 .modal-msg-window-wrap(ng-show="show" ng-click="closeFormAndReset()")
 .modal-msg-window(ng-show="show")
@@ -23,14 +61,18 @@
 .col-md-3.profile-action-wrap
 	#profile-action-user.pa-wrap-style
 		#pa-message.pa-btn
-			span.glyphicon.glyphicon-envelope
-			span Mailbox
-		#pa-edit.pa-btn
-			span.glyphicon.glyphicon-pencil
-			span Edit profile
+			a(href="/mailbox")
+				span.glyphicon.glyphicon-envelope
+				span Mailbox
+		#pa-edit.pa-btn(ng-click="profileEditModal = true")
+			a(href="")
+				span.glyphicon.glyphicon-pencil
+				span Edit profile
 		#pa-logout.pa-btn
-			span.glyphicon.glyphicon-log-out
-			span Logout
+			a(href="/logout")
+				span.glyphicon.glyphicon-log-out
+				span Logout
+
 	#profile-action-other-user.pa-wrap-style
 		#pa-send-msg.pa-btn(ng-click="show = true")
 			span.glyphicon.glyphicon-envelope
@@ -38,8 +80,6 @@
 		#pa-add-friend.pa-btn
 			span.glyphicon.glyphicon-user
 			span Add as friend
-
-
 
 .col-sm-12.profile-articles-wrap.cf
 	h3 Articles published by {{user.username}}

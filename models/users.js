@@ -17,7 +17,21 @@ var userSchema = new Schema({
 	isAdmin: {
 		type: Boolean,
 		default: false
-	}
+	},
+	birthday: {
+		type: String,
+		default: 'Unknown'
+	},
+	regDate: String,
+	country: {
+		type: String,
+		default: 'Unknown'
+	},
+	site: {
+		type: String,
+		default: 'Unknown'
+	},
+	status: String
 });
 
 userSchema.plugin(passportLocal);

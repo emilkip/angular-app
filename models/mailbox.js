@@ -10,6 +10,14 @@ var mailboxSchema = new Schema({
 	wasRead: {
 		type: Boolean,
 		default: false
+	},
+	showFrom: {
+		type: Boolean,
+		default: true
+	},
+	showTo: {
+		type: Boolean,
+		default: true
 	}
 });
 

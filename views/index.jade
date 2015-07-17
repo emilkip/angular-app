@@ -88,7 +88,7 @@ block page
 									a(href="#!/profile/{{message.from}}" ng-bind="message.from")
 								.mb-date(ng-bind="message.date")
 								.mb-text(ng-bind="message.topic")
-						a(href="/mailbox").load-more-btn Go to mailbox
+						a(href="/mailbox" ng-hide="noMsgNote").load-more-btn Go to mailbox
 						.no-msg-note(ng-show="noMsgNote")
 							span.glyphicon.glyphicon-envelope
 							p No new messages
@@ -102,7 +102,8 @@ block page
 						.pb-userinfo-wrap
 							p.username #{user.username}
 							p.pb-u-email #{user.email}
-							a(href="/logout").user-logout Logout
+							a(href="#!/profile/#{user.username}").user-btn Profile
+							a(href="/logout").user-btn Logout
 
 		//- modal window - change photo
 		.modal-window-wrap(ng-show="show" ng-click="show = false")
@@ -114,4 +115,10 @@ block page
 					input(type="file", name="avatar", id="inp-new-photo", accept="image/*")
 					button(type="submit") Save
 
+	//- Angular ng-view
 	.view.container(ng-view autoscroll="")
+
+	if (user)
+		script.
+			var user = '#{user._id}';
+			var username = '#{user.username}';

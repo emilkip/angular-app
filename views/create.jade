@@ -2,7 +2,7 @@ doctype html
 html(ng-app="mainModule")
 	head
 		title Angular app
-		link(rel="stylesheet", href="/stylesheets/style.css")
+		link(rel="stylesheet", href="/stylesheets/create-article-style.css")
 		link(rel="stylesheet", href="/stylesheets/wbbtheme.css")
 		link(rel='stylesheet', href="/bower_components/bootstrap/dist/css/bootstrap.min.css")
 
@@ -17,7 +17,7 @@ html(ng-app="mainModule")
 					textarea(name="text" id="wysibb-editor" required)
 					button(type="submit" id="article-submit").btn.btn-success Create
 					a(href="/").btn.btn-default Cancel
-					input(type="file" name="thumb" accept="image/*")
+					input(type="file" name="thumb" accept="image/jpeg, image/png")
 
 	script(src="/javascripts/concat/app.js")
 	script.
