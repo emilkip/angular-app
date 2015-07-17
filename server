@@ -8,7 +8,6 @@ var app = require('./app').app;
 var debug = require('debug')('expr4:server');
 var http = require('http').Server(app);
 var sio = require('./server-controller/chat.socket.io').listen(http);
-// var sio2 = require('./server-controller/mailbox.socket.io').listen(3001);
 
 
 /**
@@ -17,6 +16,7 @@ var sio = require('./server-controller/chat.socket.io').listen(http);
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
+console.log('Listening on port: ' + port);
 
 /**
  * Listen on provided port, on all network interfaces.

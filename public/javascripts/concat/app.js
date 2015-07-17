@@ -357,11 +357,10 @@ appService.factory('Mail', ['$resource',
 					method: 'GET',
 					params: { id: '@id' }
 				},
-				readIsTrue: {
+				change: {
 					method: 'PUT',
-					params: { id: '@id' }
+					params: { id: '@id', field: '@field' }
 				}
-
 			})
 		};
 }])
@@ -377,6 +376,20 @@ appService.factory('Article', ['$resource',
 	function($resource){
 		return {
 			api: $resource('/article/:id', {}, {
+				get: {
+					method: 'GET',
+					params: { id: '@id' }
+				},
+				like: {
+					method: 'PUT',
+					params: {
+						id: '@id',
+						userId: '@userId',
+						likeCount: '@likeCount'
+					}
+				}
+			}),
+			likeApi: $resource('/article/like/:id', {}, {
 				get: {
 					method: 'GET',
 					params: { id: '@id' }
@@ -407,6 +420,16 @@ appService.factory('LastArticle', ['$resource',
 		}
 	}
 ]);
+
+appService.factory('Country', ['$resource',
+	function($resource){
+		return $resource('javascripts/country/country.json', {}, {
+			get: {
+				method: 'GET',
+				isArray: true
+			}
+		})
+}])
 
 angular.module('ui.bootstrap.carousel', [])
 .controller('CarouselController', ['$scope', '$interval', '$animate', function ($scope, $interval, $animate) {
@@ -844,26 +867,24 @@ appController.controller('articleListCtrl', ['$scope','$http', 'User',
 
 // User side: User profile page controller
 // --------------------------------------------------
-appController.controller('profileCtrl', ['$rootScope','$scope','User','$routeParams','$location','$http',
-	function($rootScope, $scope, User, $routeParams, $location, $http){
+appController.controller('profileCtrl', ['$rootScope','$scope','User','Country','$routeParams','$location','$http',
+	function($rootScope, $scope, User, Country, $routeParams, $location, $http){
 		User.api.get({ username: $routeParams.username }, function(data) {
 			if(data.hasOwnProperty('username')) {
 				$scope.user = data;
-				$http.get('/profile/' + $scope.user.username)
-					.success(function(data, status, headers, config) {
-						if(data != true) {
-							var profileActionBtn = document.querySelector('#profile-action-user');
-							profileActionBtn.parentNode.removeChild(profileActionBtn);
-						} else {
-							var profileActionBtn = document.querySelector('#profile-action-other-user');
-							profileActionBtn.parentNode.removeChild(profileActionBtn);
-						}
-					});
 
 				var author = $scope.user.username;
 				var page = 1;
 				$rootScope.title = 'Profile: ' + $scope.user.username;
 				$scope.msgSuccess = false;
+
+				if(username != $routeParams.username) {
+					var profileActionBtn = document.querySelector('#profile-action-user');
+					profileActionBtn.remove();
+				} else {
+					var profileActionBtn = document.querySelector('#profile-action-other-user');
+					profileActionBtn.remove();
+				}
 
 				$scope.closeFormAndReset = function() {
 					$scope.show = false;
@@ -889,10 +910,13 @@ appController.controller('profileCtrl', ['$rootScope','$scope','User','$routePar
 				}
 
 				$http.get('/articles/' + author + '/' + page)
-					.success(function(data, status, headers, config) {
+					.success(function(data) {
+						if(data.articles.length == 0) {
+							$scope.notLoadMore = true;
+						}
 						$scope.articles = data.articles;
 					}).
-					error(function(data, status, headers, config) {
+					error(function(data) {
 						console.log('Error');
 					});
 
@@ -924,16 +948,52 @@ appController.controller('profileCtrl', ['$rootScope','$scope','User','$routePar
 				$location.path('/');
 			}
 		});
-}])
+
+		$scope.country = Country.query();
+}]);
 
 // User side: Article page controller
 // --------------------------------------------------
-appController.controller('articleIdCtrl', ['$rootScope','$scope','Article','$routeParams','$sce',
-	function($rootScope, $scope, Article, $routeParams, $sce) {
+appController.controller('articleIdCtrl', ['$rootScope','$scope','Article','$routeParams','$sce','$http',
+	function($rootScope, $scope, Article, $routeParams, $sce, $http) {
 		Article.api.get({ id: $routeParams.articleId }, function(data) {
 			$scope.article = data;
 			$rootScope.title = $scope.article.header;
 			$scope.html = $sce.trustAsHtml($scope.article.text);
+
+			$scope.likes = Article.likeApi.query({ id: $routeParams.articleId }, function() {
+				var likeChecker = $scope.checkLike($routeParams.articleId);
+				if(likeChecker == true) {
+					$scope.liked = { 'color': 'red' };
+				}
+			});
+
+			$scope.checkLike = function(articleId) {
+				var likeChecker = false;
+
+				for(var i = 0; i < $scope.likes.length; i++) {
+					if(articleId == $scope.likes[i].articleId && user == $scope.likes[i].userId) {
+						likeChecker = true;
+					}
+				}
+				return likeChecker;
+			}
+
+			$scope.like = function(id) {
+
+				$scope.likes = Article.likeApi.query({ id: id }, function() {
+					var likeChecker = $scope.checkLike(id);
+
+					if(likeChecker == false) {
+						$scope.liked = { 'color': 'red' };
+						var likeCount = $scope.article.like;
+						likeCount++;
+						Article.api.like({ id: id, userId: user, likeCount: likeCount }, function(data) {
+							$scope.article.like = data.likeCount;
+						});
+					}
+				});
+			}
 		});
 }]);
 
@@ -943,7 +1003,7 @@ appController.controller('mailboxMainCtrl', ['$scope','$http','MsgCount',
 	function($scope, $http, MsgCount){
 
 		$http.post('/check_mailbox')
-			.success(function(data, status, headers, config) {
+			.success(function(data) {
 				MsgCount.count = data.msgCount;
 			});
 
@@ -957,7 +1017,7 @@ appController.controller('mailboxInboxCtrl', ['$scope','$http','$location','MsgC
 		var page = 1;
 
 		$http.post('/check_mailbox')
-			.success(function(data, status, headers, config) {
+			.success(function(data) {
 				MsgCount.count = data.msgCount;
 			});
 
@@ -978,7 +1038,7 @@ appController.controller('mailboxInboxCtrl', ['$scope','$http','$location','MsgC
 			$scope.notLoadMore = false;
 
 			$http.get('/inbox/' + user + '/' + page)
-				.success(function(data, status, headers, config) {
+				.success(function(data) {
 
 					if(data == '') {
 						$scope.notLoadMore = true;
@@ -989,7 +1049,7 @@ appController.controller('mailboxInboxCtrl', ['$scope','$http','$location','MsgC
 						});
 					}
 				})
-				.error(function(data, status, headers, config) {
+				.error(function(data) {
 					console.log('Error');
 				});
 		}
@@ -1003,13 +1063,13 @@ appController.controller('mailboxSendCtrl', ['$scope','$http','MsgCount',
 		var page = 1;
 
 		$http.get('/send/' + user + '/' + page)
-			.success(function(data, status, headers, config) {
+			.success(function(data) {
 				$scope.mail = data;
 				$scope.mail.forEach(function(item, i, arr) {
 					$scope.mail[i].text = $scope.mail[i].text.replace(/<\/?[^>]+>/g,' ');
 				});
 			})
-			.error(function(data, status, headers, config) {
+			.error(function(data) {
 				console.log('Error');
 			});
 
@@ -1019,7 +1079,7 @@ appController.controller('mailboxSendCtrl', ['$scope','$http','MsgCount',
 			$scope.notLoadMore = false;
 
 			$http.get('/send/' + user + '/' + page)
-				.success(function(data, status, headers, config) {
+				.success(function(data) {
 
 					if(data == '') {
 						$scope.notLoadMore = true;
@@ -1030,7 +1090,7 @@ appController.controller('mailboxSendCtrl', ['$scope','$http','MsgCount',
 						});
 					}
 				})
-				.error(function(data, status, headers, config) {
+				.error(function(data) {
 					console.log('Error');
 				});
 		}
@@ -1038,8 +1098,8 @@ appController.controller('mailboxSendCtrl', ['$scope','$http','MsgCount',
 
 // User side: compose page controller
 // --------------------------------------------------
-appController.controller('composeCtrl', ['$scope','$http','User',
-	function($scope, $http, User){
+appController.controller('composeCtrl', ['$scope','$http','User','$route',
+	function($scope, $http, User, $route){
 
 		$scope.users = User.api.query();
 		$scope.isExist = false;
@@ -1072,17 +1132,19 @@ appController.controller('composeCtrl', ['$scope','$http','User',
 					method: 'POST',
 					url: '/message',
 					data: {from: $scope.from, to: $scope.to, topic: $scope.topic, text: $scope.msgText }
-				})
-				.success(function(data, status, headers, config) {
 				});
-					$scope.msgSuccess = true;
-					$scope.errNote = '';
+				$scope.msgSuccess = true;
+				$scope.errNote = '';
 			} else {
 				$scope.msgSuccess = false;
 				$scope.invalidClass = 'mb-msg-err-invalid';
 				$scope.errNoteClass = 'cp-err-note-show';
 				$scope.errNote = 'User: "' + $scope.to + '" not exist';
 			}
+		}
+
+		$scope.sendNewMessage = function() {
+			$route.reload();
 		}
 }]);
 
@@ -1094,12 +1156,16 @@ appController.controller('mailCtrl', ['Mail','$scope','$http','$routeParams','$s
 			$scope.mail = data;
 			$scope.html = $sce.trustAsHtml($scope.mail.text);
 
-			if($scope.mail.wasRead == false) {
-				Mail.api.readIsTrue({ id: $scope.mail._id });
+			if($scope.mail.wasRead == false && user != $scope.mail.from) {
+				Mail.api.change({ id: $scope.mail._id, field: 'wasRead' });
 			}
 
 			$scope.deleteMessage = function() {
-				Mail.api.remove({ id: $scope.mail._id });
+				if($scope.mail.from == user) {
+					Mail.api.change({ id: $scope.mail._id, field: 'showFrom' });
+				} else if($scope.mail.to == user) {
+					Mail.api.change({ id: $scope.mail._id, field: 'showTo' });
+				}
 				$location.path('/mailbox');
 			}
 		});
@@ -1146,7 +1212,7 @@ appController.controller('articleCtrl', ['$scope','$http','Article',
 				page++;
 
 				$http.get('/articles/' + page)
-					.success(function(data, status, headers, config) {
+					.success(function(data) {
 
 						if(data.article == '') {
 							$scope.notLoadMore = true;
@@ -1164,7 +1230,7 @@ appController.controller('articleCtrl', ['$scope','$http','Article',
 
 						$scope.showLoader = false;
 					})
-					.error(function(data, status, headers, config) {
+					.error(function(data) {
 						console.log('Error');
 					});
 			}

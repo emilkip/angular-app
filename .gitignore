@@ -22,6 +22,7 @@ node_modules/*
 **/uploads/article_img/*.JPEG
 **/uploads/article_img/*.PNG
 
+
 **/useravatar/350x350/*.gif
 **/useravatar/350x350/*.jpg
 **/useravatar/350x350/*.jpeg

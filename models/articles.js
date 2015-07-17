@@ -7,7 +7,11 @@ var articleSchema = new Schema({
 	author: String,
 	authorAvatar: String,
 	publishDate: String,
-	image: String
+	image: String,
+	like: {
+		type: Number,
+		default: 0
+	}
 });
 
 module.exports = mongoose.model('Article', articleSchema);

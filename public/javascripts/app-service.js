@@ -36,11 +36,10 @@ appService.factory('Mail', ['$resource',
 					method: 'GET',
 					params: { id: '@id' }
 				},
-				readIsTrue: {
+				change: {
 					method: 'PUT',
-					params: { id: '@id' }
+					params: { id: '@id', field: '@field' }
 				}
-
 			})
 		};
 }])
@@ -56,6 +55,20 @@ appService.factory('Article', ['$resource',
 	function($resource){
 		return {
 			api: $resource('/article/:id', {}, {
+				get: {
+					method: 'GET',
+					params: { id: '@id' }
+				},
+				like: {
+					method: 'PUT',
+					params: { 
+						id: '@id',
+						userId: '@userId',
+						likeCount: '@likeCount'
+					}
+				}
+			}),
+			likeApi: $resource('/article/like/:id', {}, {
 				get: {
 					method: 'GET',
 					params: { id: '@id' }
@@ -86,3 +99,13 @@ appService.factory('LastArticle', ['$resource',
 		}
 	}
 ]);
+
+appService.factory('Country', ['$resource', 
+	function($resource){
+		return $resource('javascripts/country/country.json', {}, {
+			get: {
+				method: 'GET',
+				isArray: true
+			}
+		})
+}])

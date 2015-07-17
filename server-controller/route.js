@@ -1,17 +1,19 @@
 'use strict';
 
 var express = require('express');
-var async = require('async');
 var passport = require('passport');
 var multer = require('multer');
-var Users = require('../models/users');
-var Article = require('../models/articles');
-var Mailbox = require('../models/mailbox');
 var bb = require('epochtalk-bbcode-parser');
 var fs = require('fs');
 var gm = require('gm');
 var router = express.Router();
 var app = express();
+
+// Models
+var Users = require('../models/users');
+var Article = require('../models/articles');
+var Mailbox = require('../models/mailbox');
+var ArticleLike = require('../models/article-like');
 
 
 var dateNow = function() {
@@ -44,24 +46,32 @@ router.get('/part/:filename', function(req, res) {
 	var filename = req.params.filename;
 	if(!filename) return;
 
-	res.render('part/' + filename, { 
-		user : req.user,
-	});
+	res.render('part/' + filename, { user : req.user });
 });
 
-router.get('/profile/:user', function(req, res) {
-	if(req.params.user != req.user.username) {
-		res.send(false);
+router.post('/profile/:id', function(req, res) {
+	if(req.user) {
+		Users.findByIdAndUpdate(req.params.id, { $set: { country: req.body.country, birthday: req.body.date, site: req.body.site }}, function(err, data) {
+			if(err) console.log(err);
+
+			res.redirect('/#!/profile/' + data.username);
+		});
 	} else {
-		res.send(true);
+		res.sendStatus(403);
 	}
 });
 
 router.post('/message', function(req, res) {
-	var message = new Mailbox({ from: req.body.from, to: req.body.to, topic: req.body.topic, text: req.body.text, date: dateNow() });
-	message.save();
+	if(req.user) {
+		var message = new Mailbox({ from: req.body.from, to: req.body.to, topic: req.body.topic, text: req.body.text, date: dateNow() });
+		message.save(function(err) {
+			if(err) console.log(err);
 
-	res.json({ status: 'ok'});
+			res.sendStatus(200);
+		});
+	} else {
+		res.sendStatus(403);
+	}
 });
 
 router.post('/check_mailbox', function(req, res) {
@@ -74,7 +84,6 @@ router.post('/check_mailbox', function(req, res) {
 });
 
 router.get('/last_message', function(req, res) {
-	var withAvatar = [];
 
 	Mailbox.find({ to: req.user.username, wasRead: false }, function(err, messages) {
 		if(err) console.log(err);
@@ -104,29 +113,47 @@ router.post('/create',
 		onFileUploadComplete: function(file) {
 			var imagePath = file.path;
 
-			gm(imagePath)
-				.resize(1000,720)
-				.quality(90)
-				.write('public/images/uploads/article_img/' + file.name, function(err) {
-					if(err) console.log('Error: ' + err);
-					fs.unlink('public/images/uploads/' + file.name);
-				});
+			if(file.size <= 100000) {
+				gm(imagePath)
+					.write('public/images/uploads/article_img/' + file.name, function(err) {
+						if(err) console.log('Error: ' + err);
+						fs.unlink('public/images/uploads/' + file.name);
+					});
+			} else if(file.mimetype == 'image/gif') {
+				fs.unlink('public/images/uploads/' + file.name);
+			} else {
+				gm(imagePath)
+					.resize(900,720)
+					.quality(80)
+					.write('public/images/uploads/article_img/' + file.name, function(err) {
+						if(err) console.log('Error: ' + err);
+						fs.unlink('public/images/uploads/' + file.name);
+					});
+				gm(imagePath)
+					.resize(400,720)
+					.quality(80)
+					.write('public/images/uploads/article_img_mini/' + file.name, function(err) {
+						if(err) console.log('Error: ' + err);
+						fs.unlink('public/images/uploads/' + file.name);
+					});
+			}
 		}
 	}), 
 	function(req, res) {
 
-		if(!req.files.thumb) {
+		if(!req.files.thumb || req.files.thumb.mimetype == 'image/gif') {
+			var defaultUserPlaceholder = 'article-placeholder.png';
 			var article = new Article({ header: req.body.header, text: req.body.text, author: req.user.username, authorAvatar: req.user.avatar, publishDate: dateNow(), image: defaultUserPlaceholder });
 
 			article.save(function(err) {
-				if(err) console.log('Create error!');
+				if(err) console.log(err);
 				res.redirect('/');
 			});
 		} else {
 			var article = new Article({ header: req.body.header, text: req.body.text, author: req.user.username, authorAvatar: req.user.avatar, publishDate: dateNow(), image: req.files.thumb.name });
 
 			article.save(function(err, article) {
-				if(err) console.log('Create error!');
+				if(err) console.log(err);
 				res.redirect('/');
 			});
 		}
@@ -145,42 +172,53 @@ router.get('/admin_userlist', function(req, res) {
 		res.redirect('/');
 	} else {
 		Users.find({}, function(err, data) {
-			if(err) console.error;
+			if(err) console.log(err);
 			res.json(data);
 		});
 	}
 });
 
 router.put('/admin_userlist/:id', function(req, res) {
-	Users.findById(req.params.id, function(err, data) {
-		if(err) console.error;
-		if(data.isAdmin == false) {
-			Users.findByIdAndUpdate(req.params.id, { $set: { isAdmin: true } }, function(err) {
-				if(err) console.error;
+	if(req.user) {
+		if(req.user.isAdmin) {
+			Users.findById(req.params.id, function(err, data) {
+				if(err) console.log(err);
+				if(data.isAdmin == false) {
+					Users.findByIdAndUpdate(req.params.id, { $set: { isAdmin: true } }, function(err) {
+						if(err) console.log(err);
 
-				res.sendStatus(200);
-			});
-		} else {
-			Users.findByIdAndUpdate(req.params.id, { $set: { isAdmin: false } }, function(err) {
-				if(err) console.error;
+						res.sendStatus(200);
+					});
+				} else {
+					Users.findByIdAndUpdate(req.params.id, { $set: { isAdmin: false } }, function(err) {
+						if(err) console.log(err);
 
-				res.sendStatus(200);
+						res.sendStatus(200);
+					});
+				}
 			});
-		}
-	});
+		} else res.sendStatus(403);
+
+	} else res.sendStatus(403);
+
 });
 
 router.delete('/admin_userlist/:id', function(req, res) {
-	Users.findByIdAndRemove(req.params.id, function(err) {
-		if(err) console.error;
+	if(req.user) {
+		if(req.user.isAdmin) {
+			Users.findByIdAndRemove(req.params.id, function(err) {
+				if(err) console.log(err);
 
-		res.sendStatus(200);
-	});
+				res.sendStatus(200);
+			});
+		} else res.sendStatus(403);
+
+	} else res.sendStatus(403);
 });
 
 router.get('/member_list', function(req, res) {
 	Users.find({}, function(err, data) {
-		if(err) console.error;
+		if(err) console.log(err);
 		var users = [];
 		data.forEach(function(item, i, arr) {
 			users[i] = {
@@ -195,27 +233,35 @@ router.get('/member_list', function(req, res) {
 });
 
 router.get('/member_list/:username', function(req, res) {
-	Users.findOne({ username: req.params.username }, function(err, data) {
-		if(err) console.error;
+	if(req.user) {
+		Users.findOne({ username: req.params.username }, function(err, data) {
+			if(err) console.log(err);
 
-		if(data) {
-			var user = {};
+			if(data) {
+				var user = {};
 
-			user = {
-				_id: data._id,
-				username: data.username,
-				avatar: data.avatar
-			};
+				user = {
+					_id: data._id,
+					username: data.username,
+					avatar: data.avatar,
+					country: data.country,
+					birthday: data.birthday,
+					site: data.site
+				};
 
-			res.json(user);
-		}
-	});
+				res.json(user);
+			}
+		});
+	} else {
+		res.redirect('/');
+	}
+	
 });
 
 router.get('/articles', function(req, res) {
 
 	Article.find({}, function(err, article) {
-		if(err) console.error;
+		if(err) console.log(err);
 
 		var articles = [];
 
@@ -232,7 +278,8 @@ router.get('/articles', function(req, res) {
 				author: article[i].author,
 				authorAvatar: article[i].authorAvatar,
 				publishDate: article[i].publishDate,
-				image: article[i].image
+				image: article[i].image,
+				like: article[i].like
 			}
 
 			function custom_sort(a,b) {
@@ -250,11 +297,10 @@ router.get('/articles', function(req, res) {
 	});
 });
 
-
 router.get('/articles/:page', function(req, res) {
 
 	Article.find({}, function(err, article) {
-		if(err) console.error;
+		if(err) console.log(err);
 
 		var page = req.params.page;
 		var start = (page - 1) * 5;
@@ -296,7 +342,7 @@ router.get('/articles/:page', function(req, res) {
 router.get('/articles/:author/:page', function(req, res) {
 
 	Article.find({ author: req.params.author }, function(err, data) {
-		if(err) console.error;
+		if(err) console.log(err);
 
 		var page = req.params.page;
 		var start = (page - 1) * 5;
@@ -332,7 +378,7 @@ router.get('/articles/:author/:page', function(req, res) {
 router.get('/last_articles', function(req, res) {
 
 	Article.find({}, function(err, article) {
-		if(err) console.error;
+		if(err) console.log(err);
 
 		var articles = [];
 		article.forEach(function(item, i, arr) {
@@ -366,7 +412,7 @@ router.get('/last_articles', function(req, res) {
 router.get('/article/:id', function(req, res) {
 
 	Article.findById(req.params.id, function(err, data) {
-		if(err) console.error;
+		if(err) console.log(err);
 
 		if(data) {
 			var noXssText = data.text.replace(/<\/?[^>]+>/g,' ');
@@ -377,19 +423,49 @@ router.get('/article/:id', function(req, res) {
 				text: toHtml.html,
 				author: data.author,
 				publishDate: data.publishDate,
-				image: data.image
+				image: data.image,
+				like: data.like
 			};
 			res.json(htmlArticle);
 		}
 	})
 });
 
-router.delete('/articles/:id', function(req, res) {
-	Article.findByIdAndRemove(req.params.id, function(err, data) {
-		if(err) console.error;
+router.put('/article/:id', function(req, res) {
 
-		res.sendStatus(200);
+	Article.findByIdAndUpdate(req.params.id, { $set: { like: req.body.likeCount } },
+		function(err) {
+			if(err) console.log(err);
+
+			res.send(req.body.count);
+		});
+
+	var like = new ArticleLike({ articleId: req.body.id, userId: req.body.userId });
+	like.save(function(err) {
+		if(err) console.log(err);
 	});
+});
+
+router.get('/article/like/:id', function(req, res) {
+	ArticleLike.find({ articleId: req.params.id }, function(err, data) {
+		if(err) console.log(err);
+
+		res.json(data);
+	});
+});
+
+router.delete('/articles/:id', function(req, res) {
+	if(req.user) {
+		if(req.user.isAdmin) {
+			Article.findByIdAndRemove(req.params.id, function(err, data) {
+				if(err) console.log(err);
+
+				res.sendStatus(200);
+			});
+		} else res.sendStatus(403);
+
+	} else res.sendStatus(403);
+
 });
 
 router.post('/user/avatar/:id', 
@@ -407,7 +483,7 @@ router.post('/user/avatar/:id',
 	}), 
 	function(req, res) {
 		Users.findByIdAndUpdate(req.params.id, { $set: { avatar: req.files.avatar.name } }, function(err) {
-			if (err) console.error;
+			if (err) console.log(err);
 			res.redirect('/');
 		});
 });
@@ -436,27 +512,31 @@ router.post('/register',
 		onFileUploadComplete: function(file) {
 			var imagePath = file.path;
 
-			gm(imagePath)
-				.resize(350,350)
-				.write('public/images/useravatar/350x350/' + file.name, function(err) {
-					if(err) console.log('Error: ' + err);
-					fs.unlink('public/images/useravatar/' + file.name);
-				});
+			if(file.mimetype == 'image/gif') {
+				fs.unlink('public/images/uploads/' + file.name);
+			} else {
+				gm(imagePath)
+					.resize(350,350)
+					.write('public/images/useravatar/350x350/' + file.name, function(err) {
+						if(err) console.log('Error: ' + err);
+						fs.unlink('public/images/useravatar/' + file.name);
+					});
+			}
 		}
 	}), 
 	function(req, res) {
-	if (!req.files.avatar) {
+	if (!req.files.avatar || req.files.avatar.mimetype == 'image/gif') {
 		var defaultUserPlaceholder = 'user-placeholder.png';
-		Users.register(new Users({ email: req.body.email, username: req.body.username, avatar: defaultUserPlaceholder }), req.body.password, function(err) {
-			if (err) console.error;
+		Users.register(new Users({ email: req.body.email, username: req.body.username, avatar: defaultUserPlaceholder, regDate: dateNow() }), req.body.password, function(err) {
+			if (err) console.log(err);
 
 			passport.authenticate('local')(req, res, function () {
 				res.redirect('/');
 			});
 		});
 	} else {
-		Users.register(new Users({ email: req.body.email, username: req.body.username, avatar: req.files.avatar.name }), req.body.password, function(err) {
-			if (err) console.error;
+		Users.register(new Users({ email: req.body.email, username: req.body.username, avatar: req.files.avatar.name, regDate: dateNow() }), req.body.password, function(err) {
+			if (err) console.log(err);
 
 			passport.authenticate('local')(req, res, function () {
 				res.redirect('/');
@@ -475,9 +555,9 @@ router.get('/mailbox', function(req, res) {
 
 router.get('/inbox/:user/:page', function(req, res) {
 
-	if(req.user) {
-		Mailbox.find({ to: req.params.user }, function(err, mail) {
-			if(err) console.error;
+	if(req.user.username == req.params.user) {
+		Mailbox.find({ to: req.params.user, showTo: true }, function(err, mail) {
+			if(err) console.log(err);
 
 			var page = req.params.page;
 			var start = (page - 1) * 10;
@@ -517,8 +597,8 @@ router.get('/inbox/:user/:page', function(req, res) {
 
 router.get('/send/:user/:page', function(req, res) {
 
-	if(req.user) {
-		Mailbox.find({ from: req.params.user }, function(err, mail) {
+	if(req.user.username == req.params.user) {
+		Mailbox.find({ from: req.params.user, showFrom: true }, function(err, mail) {
 			if(err) console.log(err);
 
 			var page = req.params.page;
@@ -584,21 +664,30 @@ router.get('/mail/:id', function(req, res) {
 });
 
 router.put('/mail/:id', function(req, res) {
-	Mailbox.findByIdAndUpdate( req.params.id, { $set: { wasRead: true } }, function(err) {
-		if(err) console.log(err);
+	if(req.user) {
+		if(req.body.field == 'wasRead') {
+			Mailbox.findByIdAndUpdate( req.params.id, { $set: { wasRead: true } }, function(err) {
+				if(err) console.log(err);
 
-		res.sendStatus(200);
-	});
+				res.sendStatus(200);
+			});
+		} else if(req.body.field == 'showTo') {
+			Mailbox.findByIdAndUpdate( req.params.id, { $set: { showTo: false } }, function(err) {
+				if(err) console.log(err);
+
+				res.sendStatus(200);
+			});
+		} else if(req.body.field == 'showFrom') {
+			Mailbox.findByIdAndUpdate( req.params.id, { $set: { showFrom: false } }, function(err) {
+				if(err) console.log(err);
+
+				res.sendStatus(200);
+			});
+		}
+	} else {
+		res.sendStatus(403);
+	}
 });
-
-router.delete('/mail/:id', function(req, res) {
-	Mailbox.findByIdAndRemove( req.params.id, function(err) {
-		if(err) console.log(err);
-
-		res.sendStatus(200);
-	});
-});
-
 
 router.get('/*', function(req, res) {
 	res.redirect('/');

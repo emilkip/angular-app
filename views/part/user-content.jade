@@ -14,10 +14,13 @@
 			p.article-text(ng-bind="article.text | limitTo: 400") ...
 			a(href="#!/article/{{article._id}}").btn.btn-default Read more
 			hr
+			.article-like
+				span.glyphicon.glyphicon-heart
+				span(ng-bind="article.like")
 			.publish-data
-				p
-					b Publish date: 
-					span(ng-bind="article.publishDate")
+				span.glyphicon.glyphicon-calendar
+				span(ng-bind="article.publishDate")
+
 	.col-sm-12
 		.not-load-more(ng-show="notLoadMore")
 			p No more articles
@@ -26,10 +29,14 @@
 
 
 .col-sm-4.last-news-block
-	h3 Last news
-	hr
+	h3 Last articles
 	ul
-		li(ng-repeat="article in articles | limitTo: 7")
-			a(href="#!/article/{{article._id}}" ng-bind="article.header")
-			p {{article.author}} | {{article.publishDate}}
-			hr
+		li(ng-repeat="article in articles | limitTo: 7").cf
+			.ln-header
+				a(href="#!/article/{{article._id}}" ng-bind="article.header")
+			.ln-author
+				span.glyphicon.glyphicon-user
+				a(href="#!/profile/{{article.author}}" ng-bind="article.author")
+			.ln-date
+				span.glyphicon.glyphicon-calendar
+				span(ng-bind="article.publishDate")
