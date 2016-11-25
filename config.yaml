@@ -1,0 +1,36 @@
+variables:
+    VPC_NAME:
+        required: true
+        description: the name of the VPC
+        default: test-vpc
+    VPC_OCTETS:
+        required: true
+        description: the /16 net of the VPC to look for - i.e 10.11.0.0
+        default: 10.11.0.0
+    REGION:
+        required: true
+        description: use default except for multiple region use cases
+        default: "PLAN::region"
+        type: string
+    PUBLIC_ROUTE_NAME:
+        required: true
+        description: the name to give to the public route
+        default: test-public-route
+    PUBLIC_SUBNET_NAME:
+        required: true
+        description: the cloudcoreo name of the public vpc subnets
+        default: test-public-subnet
+    SUFFIX:
+        required: false
+        description: when used will use the value to suffix the names of all converged objects
+        type: string
+    VPC_TAGS:
+        required: false
+        description: tags to apply to the vpc
+        type: array
+        default:
+    PUBLIC_SUBNET_NUM_ZONES:
+        required: true
+        description: How many public subnets to create
+        type: number
+        default: 3
